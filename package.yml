@@ -1,0 +1,33 @@
+name       : lbry-app
+version    : 0.15.0
+release    : 1
+source     :
+    - https://github.com/lbryio/lbry-app/archive/v0.15.0.tar.gz : 869687539ce880f0fc85deb2bf9ca063691d71c6ca183a032962318f5ecc7838
+license    : MIT
+component  : multimedia.video
+networking : yes
+summary    : This is a graphical browser for the decentralized content marketplace provided by the LBRY protocol.
+description: |
+    This is a graphical browser for the decentralized content marketplace provided by the LBRY protocol.
+builddeps  :
+    - pkgconfig(alsa)
+    - pkgconfig(gconf-2.0)
+    - pkgconfig(gtk+-2.0)
+    - pkgconfig(libsecret-1)
+    - pkgconfig(xcomposite)
+    - pkgconfig(xcursor)
+    - pkgconfig(xrandr)
+    - pkgconfig(xscrnsaver)
+    - wget
+    - yarn
+setup      : |
+    ./build.sh
+build      : |
+    node_modules/.bin/build --linux dir --x64 -p never
+install    : |
+    install -dm00755 $installdir/usr/bin
+    install -dm00644 $installdir/usr/share/lbry-app
+    cp -R dist/linux-unpacked/* $installdir/usr/share/lbry-app/
+    ln -s /usr/share/lbry-app/lbry $installdir/usr/bin/lbry
+    install -Dm00644 $pkgfiles/lbry-app.desktop $installdir/usr/share/applications/lbry-app.desktop
+    install -Dm00644 build/icons/256x256.png $installdir/usr/share/pixmaps/lbry.png

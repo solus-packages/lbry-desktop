@@ -1,0 +1,12 @@
+[Desktop Entry]
+Name=Lbry
+Comment=Lbry.io app
+GenericName=Text Editor
+Exec=lbry %U
+Icon=lbry
+Type=Application
+Terminal=false
+StartupNotify=true
+StartupWMClass=lbry
+Categories=Network;FileTransfer;P2P;AudioVideo;Player;Video;
+MimeType=text/plain;
