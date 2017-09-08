@@ -9,4 +9,4 @@ Terminal=false
 StartupNotify=true
 StartupWMClass=lbry
 Categories=Network;FileTransfer;P2P;AudioVideo;Player;Video;
-MimeType=text/plain;
+MimeType=x-scheme-handler/lbry;
