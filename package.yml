@@ -1,13 +1,12 @@
 name       : lbry-app
-version    : 1.15.1
-release    : 3
+version    : 0.16.0
+release    : 4
 source     :
-    - https://github.com/lbryio/lbry-app/archive/v0.15.1.tar.gz : b29f35d3b47f0bdd9808e03b455a6fd33cd40179c8f1dfc0b5dfeab938c7b7db
+    - https://github.com/lbryio/lbry-app/archive/v0.16.0.tar.gz : 84672793112bbea8013db1f70b7e7305eb493a610afed5618c4c97f3a21620d0
 license    : MIT
 component  : multimedia.video
 networking : yes
-summary    : This is a graphical browser for the decentralized content marketplace
-    provided by the LBRY protocol.
+summary    : This is a graphical browser for the decentralized content marketplace provided by the LBRY protocol.
 description: |
     This is a graphical browser for the decentralized content marketplace provided by the LBRY protocol.
 builddeps  :
