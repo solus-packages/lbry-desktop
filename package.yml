@@ -1,8 +1,8 @@
 name       : lbry-app
-version    : 0.17.1
-release    : 7
+version    : 0.18.0
+release    : 8
 source     :
-    - https://github.com/lbryio/lbry-app/archive/v0.17.1.tar.gz : b9d65fae7c0e9432d61e19c64d6b0fa87b538e821c0c9999170ad89bd4476fe8
+    - https://github.com/lbryio/lbry-app/archive/v0.18.0.tar.gz : 10ab4f1e7b35c995dbf45b19ee46d003e6e5a695e94db45b4b29bf876f937028
 license    : MIT
 component  : multimedia.video
 networking : yes
@@ -16,6 +16,7 @@ builddeps  :
     - pkgconfig(libsecret-1)
     - pkgconfig(xcomposite)
     - pkgconfig(xcursor)
+    - pkgconfig(xi)
     - pkgconfig(xrandr)
     - pkgconfig(xscrnsaver)
     - wget
