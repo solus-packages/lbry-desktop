@@ -1,4 +1,4 @@
-From bd8c56455ceeff0e4a852992577c6f83a15c6e4c Mon Sep 17 00:00:00 2001
+From bffa1bcebf58cfa0d411de1b9c24a53cef5623b8 Mon Sep 17 00:00:00 2001
 From: Joshua Strobl <joshua@stroblindustries.com>
 Date: Wed, 13 Dec 2017 20:59:24 +0200
 Subject: [PATCH 1/1] Disable upgrade prompting until there is an upstream
@@ -12,10 +12,10 @@ Subject: [PATCH 1/1] Disable upgrade prompting until there is an upstream
  4 files changed, 17 deletions(-)
 
 diff --git a/src/renderer/component/header/view.jsx b/src/renderer/component/header/view.jsx
-index 1e83abbe..09a791f0 100644
+index b3b6cdc5..9b09339e 100644
 --- a/src/renderer/component/header/view.jsx
 +++ b/src/renderer/component/header/view.jsx
-@@ -85,14 +85,6 @@ export const Header = props => {
+@@ -86,14 +86,6 @@ export const Header = props => {
            title={__("Settings")}
          />
        </div>
@@ -72,13 +72,13 @@ index 6ffcb715..4047f70e 100644
          return <ModalDownloading {...modalProps} />;
        case modals.ERROR:
 diff --git a/src/renderer/redux/actions/app.js b/src/renderer/redux/actions/app.js
-index 46b2e5fa..a1278f20 100644
+index 7bcb4347..99600593 100644
 --- a/src/renderer/redux/actions/app.js
 +++ b/src/renderer/redux/actions/app.js
-@@ -223,10 +223,6 @@ export function doDaemonReady() {
+@@ -222,10 +222,6 @@ export function doDaemonReady() {
+     dispatch(doBalanceSubscribe());
      dispatch(doFetchFileInfosAndPublishedClaims());
      dispatch(doFetchRewardedContent());
-     dispatch(doFetchTransactions(false));
 -    if (!selectIsUpgradeSkipped(state)) {
 -      dispatch(doCheckUpgradeAvailable());
 -    }
