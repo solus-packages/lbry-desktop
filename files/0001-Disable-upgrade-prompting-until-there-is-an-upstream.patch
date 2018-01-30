@@ -1,27 +1,27 @@
-From 264f1bb7d8484fcb769c795dc54b4719f23e01d4 Mon Sep 17 00:00:00 2001
+From eb80c10e0277be05c30dfd29c834c3b5b5291f86 Mon Sep 17 00:00:00 2001
 From: Joshua Strobl <joshua@stroblindustries.com>
-Date: Wed, 13 Dec 2017 20:59:24 +0200
+Date: Tue, 30 Jan 2018 22:35:38 +0200
 Subject: [PATCH 1/1] Disable upgrade prompting until there is an upstream
  option to disable it.
 
 ---
  src/renderer/component/header/view.jsx  | 8 --------
- src/renderer/component/splash/view.jsx  | 2 --
+ src/renderer/component/splash/view.jsx  | 1 -
  src/renderer/modal/modalRouter/view.jsx | 3 ---
  src/renderer/redux/actions/app.js       | 4 ----
- 4 files changed, 17 deletions(-)
+ 4 files changed, 16 deletions(-)
 
 diff --git a/src/renderer/component/header/view.jsx b/src/renderer/component/header/view.jsx
-index c1289c88..dea746b7 100644
+index 7109d7b8..3a021f68 100644
 --- a/src/renderer/component/header/view.jsx
 +++ b/src/renderer/component/header/view.jsx
-@@ -86,14 +86,6 @@ export const Header = props => {
+@@ -87,14 +87,6 @@ export const Header = props => {
            title={__('Settings')}
          />
        </div>
--      {isUpgradeAvailable && (
+-      {(autoUpdateDownloaded || (process.platform === 'linux' && isUpgradeAvailable)) && (
 -        <Link
--          onClick={() => downloadUpgrade()}
+-          onClick={() => downloadUpgradeRequested()}
 -          button="primary button--flat"
 -          icon="icon-arrow-up"
 -          label={__('Upgrade App')}
@@ -31,18 +31,10 @@ index c1289c88..dea746b7 100644
    );
  };
 diff --git a/src/renderer/component/splash/view.jsx b/src/renderer/component/splash/view.jsx
-index 02bb7c23..9bfc5825 100644
+index 02bb7c23..5d4f6582 100644
 --- a/src/renderer/component/splash/view.jsx
 +++ b/src/renderer/component/splash/view.jsx
-@@ -3,7 +3,6 @@ import PropTypes from 'prop-types';
- import lbry from 'lbry.js';
- import LoadScreen from '../load_screen.js';
- import ModalIncompatibleDaemon from 'modal/modalIncompatibleDaemon';
--import ModalUpgrade from 'modal/modalUpgrade';
- import ModalDownloading from 'modal/modalDownloading';
- import * as modals from 'constants/modal_types';
- 
-@@ -103,7 +102,6 @@ export class SplashScreen extends React.PureComponent {
+@@ -103,7 +103,6 @@ export class SplashScreen extends React.PureComponent {
              daemon doesn't let you quit during startup, so the "Quit" buttons
              in the modals won't work. */}
          {modal == 'incompatibleDaemon' && isRunning && <ModalIncompatibleDaemon />}
@@ -51,31 +43,31 @@ index 02bb7c23..9bfc5825 100644
        </div>
      );
 diff --git a/src/renderer/modal/modalRouter/view.jsx b/src/renderer/modal/modalRouter/view.jsx
-index b2d68fbf..07b50c09 100644
+index 34188317..ffc78b44 100644
 --- a/src/renderer/modal/modalRouter/view.jsx
 +++ b/src/renderer/modal/modalRouter/view.jsx
-@@ -2,7 +2,6 @@ import React from 'react';
- import ModalError from 'modal/modalError';
- import ModalAuthFailure from 'modal/modalAuthFailure';
+@@ -4,7 +4,6 @@ import ModalAuthFailure from 'modal/modalAuthFailure';
  import ModalDownloading from 'modal/modalDownloading';
+ import ModalAutoUpdateDownloaded from 'modal/modalAutoUpdateDownloaded';
+ import ModalAutoUpdateConfirm from 'modal/modalAutoUpdateConfirm';
 -import ModalUpgrade from 'modal/modalUpgrade';
  import ModalWelcome from 'modal/modalWelcome';
  import ModalFirstReward from 'modal/modalFirstReward';
  import ModalRewardApprovalRequired from 'modal/modalRewardApprovalRequired';
-@@ -98,8 +97,6 @@ class ModalRouter extends React.PureComponent {
-     const { modal, modalProps } = this.props;
+@@ -101,8 +100,6 @@ class ModalRouter extends React.PureComponent {
+     const { modal, modalsAllowed, modalProps } = this.props;
  
      switch (modal) {
 -      case modals.UPGRADE:
 -        return <ModalUpgrade {...modalProps} />;
        case modals.DOWNLOADING:
          return <ModalDownloading {...modalProps} />;
-       case modals.ERROR:
+       case modals.AUTO_UPDATE_DOWNLOADED:
 diff --git a/src/renderer/redux/actions/app.js b/src/renderer/redux/actions/app.js
-index 3eb7b74e..3d4b405c 100644
+index 0d94fe4d..d60864f4 100644
 --- a/src/renderer/redux/actions/app.js
 +++ b/src/renderer/redux/actions/app.js
-@@ -218,10 +218,6 @@ export function doDaemonReady() {
+@@ -292,10 +292,6 @@ export function doDaemonReady() {
      dispatch(doBalanceSubscribe());
      dispatch(doFetchFileInfosAndPublishedClaims());
      dispatch(doFetchRewardedContent());
@@ -87,5 +79,5 @@ index 3eb7b74e..3d4b405c 100644
  }
  
 -- 
-2.15.1
+2.16.1
 

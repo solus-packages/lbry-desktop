@@ -1,0 +1,28 @@
+From 693705bc82ed414d519ac0d1c018cfe8c80c1092 Mon Sep 17 00:00:00 2001
+From: Joshua Strobl <joshua@stroblindustries.com>
+Date: Tue, 30 Jan 2018 22:57:17 +0200
+Subject: [PATCH 1/1] Force x64.
+
+---
+ package.json | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/package.json b/package.json
+index b0c1d030..a1413c9f 100644
+--- a/package.json
++++ b/package.json
+@@ -19,9 +19,9 @@
+     "extract-langs": "node build/extractLocals.js",
+     "dev": "electron-webpack dev",
+     "compile": "electron-webpack && yarn extract-langs",
+-    "build": "yarn compile && electron-builder build",
++    "build": "yarn compile && electron-builder build --arch=x64",
+     "build:dir": "yarn build -- --dir -c.compression=store -c.mac.identity=null",
+-    "postinstall": "electron-builder install-app-deps",
++    "postinstall": "electron-builder install-app-deps --arch=x64",
+     "lint": "eslint 'src/**/*.{js,jsx}' --fix",
+     "format": "prettier 'src/**/*.{js,jsx,scss,json}' --write"
+   },
+-- 
+2.16.1
+

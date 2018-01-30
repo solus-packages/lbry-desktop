@@ -1,13 +1,12 @@
 name       : lbry-app
-version    : 0.19.4
-release    : 15
+version    : 0.20.0
+release    : 16
 source     :
-    - https://github.com/lbryio/lbry-app/archive/v0.19.4.tar.gz : 3da9f4cf74ec3436807cf2015b32f01a194ec5bbf28c275b05ffe99dd7b60470
+    - https://github.com/lbryio/lbry-app/archive/v0.20.0.tar.gz : 61e6e115cb09bd9b829a097f915e1c039eb7e85e820614d5f35f9838dbbe9767
 license    : MIT
 component  : multimedia.video
 networking : yes
-summary    : This is a graphical browser for the decentralized content marketplace
-    provided by the LBRY protocol.
+summary    : This is a graphical browser for the decentralized content marketplace provided by the LBRY protocol.
 description: |
     This is a graphical browser for the decentralized content marketplace provided by the LBRY protocol.
 builddeps  :
@@ -24,10 +23,13 @@ builddeps  :
     - yarn
 setup      : |
     %patch -p1 < $pkgfiles/0001-Disable-upgrade-prompting-until-there-is-an-upstream.patch
-    %patch -p1 < $pkgfiles/0001-Re-introduce-build-dir-dist-dir-option-for-isolated-.patch
+    %patch -p1 < $pkgfiles/0001-Force-x64.patch
 build      : |
     ./build.sh
     yarn build:dir
+    for arch in arm arm64 ia32; do
+        find . -name "${arch}" -type d -exec rm -rf {} +
+    done
 install    : |
     install -dm00755 $installdir/usr/bin
     install -dm00644 $installdir/usr/share/lbry-app
