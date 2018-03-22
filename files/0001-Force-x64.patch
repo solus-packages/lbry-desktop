@@ -1,6 +1,6 @@
-From 693705bc82ed414d519ac0d1c018cfe8c80c1092 Mon Sep 17 00:00:00 2001
+From f3571f1751ef28f1f312e57d8b9152200ec862b7 Mon Sep 17 00:00:00 2001
 From: Joshua Strobl <joshua@stroblindustries.com>
-Date: Tue, 30 Jan 2018 22:57:17 +0200
+Date: Thu, 22 Mar 2018 23:24:32 +0200
 Subject: [PATCH 1/1] Force x64.
 
 ---
@@ -8,21 +8,22 @@ Subject: [PATCH 1/1] Force x64.
  1 file changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/package.json b/package.json
-index b0c1d030..a1413c9f 100644
+index e240f5b2..cbd6940c 100644
 --- a/package.json
 +++ b/package.json
-@@ -19,9 +19,9 @@
+@@ -23,10 +23,10 @@
      "extract-langs": "node build/extractLocals.js",
      "dev": "electron-webpack dev",
      "compile": "electron-webpack && yarn extract-langs",
 -    "build": "yarn compile && electron-builder build",
 +    "build": "yarn compile && electron-builder build --arch=x64",
      "build:dir": "yarn build -- --dir -c.compression=store -c.mac.identity=null",
--    "postinstall": "electron-builder install-app-deps",
-+    "postinstall": "electron-builder install-app-deps --arch=x64",
+     "release": "yarn compile && electron-builder build",
+-    "postinstall": "electron-builder install-app-deps && node build/downloadDaemon.js",
++    "postinstall": "electron-builder install-app-deps --arch=x64 && node build/downloadDaemon.js",
      "lint": "eslint 'src/**/*.{js,jsx}' --fix",
      "format": "prettier 'src/**/*.{js,jsx,scss,json}' --write"
    },
 -- 
-2.16.1
+2.16.2
 
