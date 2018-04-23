@@ -1,8 +1,8 @@
 name       : lbry-app
-version    : 0.21.2
-release    : 17
+version    : 0.21.3
+release    : 18
 source     :
-    - https://github.com/lbryio/lbry-app/archive/v0.21.2.tar.gz : b693a5bc1318fb44038bcfa139cc1856b48054d4f9684f901cf8f3a9ed78371f
+    - https://github.com/lbryio/lbry-app/archive/v0.21.3.tar.gz : 1a8d602a6d6d23f9900d3eeb0d2ac578fed5d5c485acc11227161d1cd63e698a
 license    : MIT
 component  : multimedia.video
 networking : yes
