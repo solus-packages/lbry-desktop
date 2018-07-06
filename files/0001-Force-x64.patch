@@ -1,6 +1,6 @@
-From 36a01104dbf3d4e3d498422edf68477714f84cbb Mon Sep 17 00:00:00 2001
+From 1608a766cc1162e28db28f306731b582f9e63a1e Mon Sep 17 00:00:00 2001
 From: Joshua Strobl <joshua@stroblindustries.com>
-Date: Wed, 27 Jun 2018 20:13:24 +0300
+Date: Fri, 6 Jul 2018 14:05:18 +0300
 Subject: [PATCH 1/1] Force x64.
 
 ---
@@ -8,7 +8,7 @@ Subject: [PATCH 1/1] Force x64.
  1 file changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/package.json b/package.json
-index b83802db..9b41d04b 100644
+index 4fb5ae3..d5878fb 100644
 --- a/package.json
 +++ b/package.json
 @@ -22,7 +22,7 @@
@@ -20,15 +20,15 @@ index b83802db..9b41d04b 100644
      "build:dir": "yarn build -- --dir -c.compression=store -c.mac.identity=null",
      "dev": "electron-webpack dev",
      "lint": "eslint 'src/**/*.{js,jsx}' --fix && flow",
-@@ -30,7 +30,7 @@
-     "flow-defs": "flow-typed install",
+@@ -31,7 +31,7 @@
      "release": "yarn compile && electron-builder build",
      "precommit": "lint-staged",
--    "postinstall": "electron-builder install-app-deps & node build/downloadDaemon.js",
-+    "postinstall": "electron-builder install-app-deps --arch=x64 && node build/downloadDaemon.js",
-     "clean": "rm -r node_modules && yarn cache clean lbry-redux && yarn"
+     "preinstall": "yarn cache clean lbry-redux",
+-    "postinstall": "electron-builder install-app-deps & node build/downloadDaemon.js"
++    "postinstall": "electron-builder install-app-deps --arch=x64 & node build/downloadDaemon.js"
    },
    "dependencies": {
+     "bluebird": "^3.5.1",
 -- 
 2.18.0
 
