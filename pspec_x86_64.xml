@@ -95,10 +95,10 @@
             <Path fileType="data">/usr/share/lbry-app/resources/app.asar.unpacked/node_modules/7zip-bin/linux/x64/do-build.sh</Path>
             <Path fileType="data">/usr/share/lbry-app/resources/app.asar.unpacked/node_modules/7zip-bin/mac/7za</Path>
             <Path fileType="data">/usr/share/lbry-app/resources/app.asar.unpacked/node_modules/7zip-bin/package.json</Path>
-            <Path fileType="data">/usr/share/lbry-app/resources/app.asar.unpacked/node_modules/builder-util/node_modules/app-builder-bin/index.js</Path>
-            <Path fileType="data">/usr/share/lbry-app/resources/app.asar.unpacked/node_modules/builder-util/node_modules/app-builder-bin/linux/x64/app-builder</Path>
-            <Path fileType="data">/usr/share/lbry-app/resources/app.asar.unpacked/node_modules/builder-util/node_modules/app-builder-bin/mac/app-builder</Path>
-            <Path fileType="data">/usr/share/lbry-app/resources/app.asar.unpacked/node_modules/builder-util/node_modules/app-builder-bin/package.json</Path>
+            <Path fileType="data">/usr/share/lbry-app/resources/app.asar.unpacked/node_modules/electron-publisher-s3/node_modules/app-builder-bin/index.js</Path>
+            <Path fileType="data">/usr/share/lbry-app/resources/app.asar.unpacked/node_modules/electron-publisher-s3/node_modules/app-builder-bin/linux/x64/app-builder</Path>
+            <Path fileType="data">/usr/share/lbry-app/resources/app.asar.unpacked/node_modules/electron-publisher-s3/node_modules/app-builder-bin/mac/app-builder</Path>
+            <Path fileType="data">/usr/share/lbry-app/resources/app.asar.unpacked/node_modules/electron-publisher-s3/node_modules/app-builder-bin/package.json</Path>
             <Path fileType="data">/usr/share/lbry-app/resources/electron.asar</Path>
             <Path fileType="data">/usr/share/lbry-app/resources/static/daemon/lbrynet-daemon</Path>
             <Path fileType="data">/usr/share/lbry-app/resources/static/favicon.ico</Path>
@@ -156,6 +156,7 @@
             <Path fileType="data">/usr/share/lbry-app/resources/static/img/lbry-dark-1600x528.png</Path>
             <Path fileType="data">/usr/share/lbry-app/resources/static/img/lbry-white-485x160.png</Path>
             <Path fileType="data">/usr/share/lbry-app/resources/static/img/lbry-white-909x300.png</Path>
+            <Path fileType="data">/usr/share/lbry-app/resources/static/img/no-thumbnail.png</Path>
             <Path fileType="data">/usr/share/lbry-app/resources/static/img/stripe-background.png</Path>
             <Path fileType="data">/usr/share/lbry-app/resources/static/img/tray/default/tray.png</Path>
             <Path fileType="data">/usr/share/lbry-app/resources/static/img/tray/mac/trayTemplate.png</Path>
@@ -178,9 +179,9 @@
         </Files>
     </Package>
     <History>
-        <Update release="24">
-            <Date>2018-07-10</Date>
-            <Version>0.22.2</Version>
+        <Update release="25">
+            <Date>2018-07-25</Date>
+            <Version>0.23.0</Version>
             <Comment>Packaging update</Comment>
             <Name>Joshua Strobl</Name>
             <Email>joshua@stroblindustries.com</Email>
