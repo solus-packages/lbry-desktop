@@ -2,19 +2,19 @@
     <Source>
         <Name>lbry-app</Name>
         <Packager>
-            <Name>Joshua Strobl</Name>
-            <Email>joshua@stroblindustries.com</Email>
+            <Name>Pierre-Yves</Name>
+            <Email>pyu@riseup.net</Email>
         </Packager>
         <License>MIT</License>
         <PartOf>multimedia.video</PartOf>
-        <Summary xml:lang="en">This is a graphical browser for the decentralized content marketplace provided by the LBRY protocol.</Summary>
+        <Summary xml:lang="en">This is a graphical browser for the decentralized content marketplace provided by the LBRY protocol</Summary>
         <Description xml:lang="en">This is a graphical browser for the decentralized content marketplace provided by the LBRY protocol.
 </Description>
         <Archive type="binary" sha1sum="79eb0752a961b8e0d15c77d298c97498fbc89c5a">https://solus-project.com/sources/README.Solus</Archive>
     </Source>
     <Package>
         <Name>lbry-app</Name>
-        <Summary xml:lang="en">This is a graphical browser for the decentralized content marketplace provided by the LBRY protocol.</Summary>
+        <Summary xml:lang="en">This is a graphical browser for the decentralized content marketplace provided by the LBRY protocol</Summary>
         <Description xml:lang="en">This is a graphical browser for the decentralized content marketplace provided by the LBRY protocol.
 </Description>
         <PartOf>multimedia.video</PartOf>
@@ -179,12 +179,12 @@
         </Files>
     </Package>
     <History>
-        <Update release="26">
-            <Date>2018-08-01</Date>
+        <Update release="27">
+            <Date>2018-08-05</Date>
             <Version>0.23.1</Version>
             <Comment>Packaging update</Comment>
-            <Name>Joshua Strobl</Name>
-            <Email>joshua@stroblindustries.com</Email>
+            <Name>Pierre-Yves</Name>
+            <Email>pyu@riseup.net</Email>
         </Update>
     </History>
 </PISI>
