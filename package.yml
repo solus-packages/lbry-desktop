@@ -1,8 +1,8 @@
 name       : lbry-app
-version    : 0.24.0
-release    : 28
+version    : 0.25.0
+release    : 29
 source     :
-    - https://github.com/lbryio/lbry-app/archive/v0.24.0.tar.gz : b41808275bd31e7589b5dd6879934d6d3c7ba19c0e2f5f02b3394a8be783fbaf
+    - https://github.com/lbryio/lbry-app/archive/v0.25.0.tar.gz : 2d9ad1cb19524d02bd02e4a9b7c35401cd0e92bd8df28e862fab95c0ee7c3257
 license    : MIT
 component  : multimedia.video
 networking : yes
@@ -22,8 +22,7 @@ builddeps  :
     - wget
     - yarn
 setup      : |
-    %patch -p1 < $pkgfiles/0001-Disable-upgrade-prompting-until-there-is-an-upstream.patch
-    %patch -p1 < $pkgfiles/0001-Force-x64.patch
+    %patch -p1 < $pkgfiles/0001-Force-x64-and-strip-out-upgrade-prompting.patch
     yarn
 build      : |
     yarn build:dir

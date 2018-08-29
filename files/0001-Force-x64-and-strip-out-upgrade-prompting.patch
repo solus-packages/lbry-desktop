@@ -1,16 +1,38 @@
-From bf44a0e78b1ad477de46281e2cbc84d589a5d9a4 Mon Sep 17 00:00:00 2001
+From b0238020ff8aa4c9c1eb8bb88cb707b5eef9cdf0 Mon Sep 17 00:00:00 2001
 From: Joshua Strobl <joshua@stroblindustries.com>
-Date: Wed, 27 Jun 2018 20:09:39 +0300
-Subject: [PATCH 1/1] Disable upgrade prompting until there is an upstream
- option to disable it.
+Date: Wed, 29 Aug 2018 22:43:57 +0300
+Subject: [PATCH 1/1] Force x64 and strip out upgrade prompting.
 
 ---
+ package.json                            |  4 ++--
  src/renderer/component/header/view.jsx  | 12 ------------
  src/renderer/component/splash/view.jsx  |  1 -
  src/renderer/modal/modalRouter/view.jsx |  3 ---
- src/renderer/redux/actions/app.js       |  4 ----
- 4 files changed, 20 deletions(-)
+ src/renderer/redux/actions/app.js       |  3 ---
+ 5 files changed, 2 insertions(+), 21 deletions(-)
 
+diff --git a/package.json b/package.json
+index f34b0e86..d8eeeebb 100644
+--- a/package.json
++++ b/package.json
+@@ -22,7 +22,7 @@
+   "scripts": {
+     "extract-langs": "node build/extractLocals.js",
+     "compile": "electron-webpack && yarn extract-langs",
+-    "build": "yarn compile && electron-builder build",
++    "build": "yarn compile && electron-builder build --arch=x64",
+     "build:dir": "yarn build -- --dir -c.compression=store -c.mac.identity=null",
+     "dev": "electron-webpack dev",
+     "lint": "eslint 'src/**/*.{js,jsx}' --fix && flow",
+@@ -31,7 +31,7 @@
+     "release": "yarn compile && electron-builder build",
+     "precommit": "lint-staged",
+     "preinstall": "yarn cache clean lbry-redux",
+-    "postinstall": "electron-builder install-app-deps && node build/downloadDaemon.js"
++    "postinstall": "electron-builder install-app-deps --arch=x64 & node build/downloadDaemon.js"
+   },
+   "dependencies": {
+     "bluebird": "^3.5.1",
 diff --git a/src/renderer/component/header/view.jsx b/src/renderer/component/header/view.jsx
 index 372380a8..676b8cb3 100644
 --- a/src/renderer/component/header/view.jsx
@@ -42,19 +64,19 @@ index 372380a8..676b8cb3 100644
      </header>
    );
 diff --git a/src/renderer/component/splash/view.jsx b/src/renderer/component/splash/view.jsx
-index 5985503c..839c5800 100644
+index 708dc731..157d9346 100644
 --- a/src/renderer/component/splash/view.jsx
 +++ b/src/renderer/component/splash/view.jsx
-@@ -115,7 +115,6 @@ export class SplashScreen extends React.PureComponent<Props, State> {
-         {isRunning && (
+@@ -141,7 +141,6 @@ export class SplashScreen extends React.PureComponent<Props, State> {
            <React.Fragment>
+             {notificationId === MODALS.WALLET_UNLOCK && <ModalWalletUnlock />}
              {notificationId === MODALS.INCOMPATIBLE_DAEMON && <ModalIncompatibleDaemon />}
 -            {notificationId === MODALS.UPGRADE && <ModalUpgrade />}
              {notificationId === MODALS.DOWNLOADING && <ModalDownloading />}
            </React.Fragment>
          )}
 diff --git a/src/renderer/modal/modalRouter/view.jsx b/src/renderer/modal/modalRouter/view.jsx
-index 9f4cd609..503ae275 100644
+index 34152119..2a848a61 100644
 --- a/src/renderer/modal/modalRouter/view.jsx
 +++ b/src/renderer/modal/modalRouter/view.jsx
 @@ -5,7 +5,6 @@ import ModalAuthFailure from 'modal/modalAuthFailure';
@@ -65,7 +87,7 @@ index 9f4cd609..503ae275 100644
  import ModalWelcome from 'modal/modalWelcome';
  import ModalFirstReward from 'modal/modalFirstReward';
  import ModalRewardApprovalRequired from 'modal/modalRewardApprovalRequired';
-@@ -119,8 +118,6 @@ class ModalRouter extends React.PureComponent<Props> {
+@@ -122,8 +121,6 @@ class ModalRouter extends React.PureComponent<Props> {
      }
  
      switch (notification.id) {
@@ -75,20 +97,19 @@ index 9f4cd609..503ae275 100644
          return <ModalDownloading {...notificationProps} />;
        case MODALS.AUTO_UPDATE_DOWNLOADED:
 diff --git a/src/renderer/redux/actions/app.js b/src/renderer/redux/actions/app.js
-index e2e433b0..07442142 100644
+index 7b6e2cc3..1088c4b2 100644
 --- a/src/renderer/redux/actions/app.js
 +++ b/src/renderer/redux/actions/app.js
-@@ -293,10 +293,6 @@ export function doDaemonReady() {
+@@ -343,9 +343,6 @@ export function doDaemonReady() {
      dispatch(doBalanceSubscribe());
      dispatch(doFetchFileInfosAndPublishedClaims());
      dispatch(doFetchRewardedContent());
 -    if (!selectIsUpgradeSkipped(state)) {
 -      dispatch(doCheckUpgradeAvailable());
 -    }
--    dispatch(doCheckUpgradeSubscribe());
-     dispatch(doCheckSubscriptions());
+     dispatch(doCheckUpgradeSubscribe());
+     dispatch(doCheckSubscriptionsInit());
    };
- }
 -- 
 2.18.0
 
