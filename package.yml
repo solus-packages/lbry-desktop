@@ -1,14 +1,16 @@
-name       : lbry-app
-version    : 0.25.0
-release    : 29
+name       : lbry-desktop
+version    : 0.25.1
+release    : 30
 source     :
-    - https://github.com/lbryio/lbry-app/archive/v0.25.0.tar.gz : 2d9ad1cb19524d02bd02e4a9b7c35401cd0e92bd8df28e862fab95c0ee7c3257
+    - https://github.com/lbryio/lbry-desktop/archive/v0.25.1.tar.gz : e3df053041433f4dee5f87d7a10a01fea05ef52bc5eb29261aef09d8546206b0
 license    : MIT
 component  : multimedia.video
 networking : yes
 summary    : This is a graphical browser for the decentralized content marketplace provided by the LBRY protocol
 description: |
     This is a graphical browser for the decentralized content marketplace provided by the LBRY protocol.
+replaces   :
+    - lbry-app
 builddeps  :
     - pkgconfig(alsa)
     - pkgconfig(gconf-2.0)
@@ -31,8 +33,8 @@ build      : |
     done
 install    : |
     install -dm00755 $installdir/usr/bin
-    install -dm00644 $installdir/usr/share/lbry-app
-    cp -R dist/linux-unpacked/* $installdir/usr/share/lbry-app/
-    ln -s /usr/share/lbry-app/lbry $installdir/usr/bin/lbry
-    install -Dm00644 $pkgfiles/lbry-app.desktop $installdir/usr/share/applications/lbry-app.desktop
+    install -dm00644 $installdir/usr/share/lbry-desktop
+    cp -R dist/linux-unpacked/* $installdir/usr/share/lbry-desktop/
+    ln -s /usr/share/lbry-desktop/lbry $installdir/usr/bin/lbry
+    install -Dm00644 $pkgfiles/lbry-desktop.desktop $installdir/usr/share/applications/lbry-desktop.desktop
     install -Dm00644 build/icons/256x256.png $installdir/usr/share/pixmaps/lbry.png
