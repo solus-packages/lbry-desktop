@@ -1,27 +1,27 @@
-From 66f9e29f374b8992f31cc28864252a1e471c08a7 Mon Sep 17 00:00:00 2001
+From 46209ca066378e4b12fac5d7321c5ec0a8c92a7e Mon Sep 17 00:00:00 2001
 From: Joshua Strobl <joshua@stroblindustries.com>
 Date: Tue, 11 Dec 2018 20:57:54 +0200
 Subject: [PATCH 1/1] Force x64 and strip out upgrade prompting.
 
 ---
- package.json                            |  6 ++++--
+ package.json                            |  5 +++--
  src/renderer/component/header/view.jsx  | 12 ------------
  src/renderer/component/splash/view.jsx  |  3 ---
  src/renderer/modal/modalRouter/view.jsx |  3 ---
  src/renderer/redux/actions/app.js       | 11 -----------
- 5 files changed, 4 insertions(+), 31 deletions(-)
+ 5 files changed, 3 insertions(+), 31 deletions(-)
 
 diff --git a/package.json b/package.json
-index c0c0f2d5..51cc7d45 100644
+index 43a0f0d9..51cc7d45 100644
 --- a/package.json
 +++ b/package.json
-@@ -22,14 +22,16 @@
+@@ -22,15 +22,16 @@
    "scripts": {
      "extract-langs": "node build/extractLocals.js",
      "compile": "electron-webpack && yarn extract-langs",
 -    "build": "yarn compile && electron-builder build",
 +    "build": "yarn compile && electron-builder build --arch=x64",
-+    "build:dir": "yarn build -- --dir -c.compression=store -c.mac.identity=null",
+     "build:dir": "yarn build -- --dir -c.compression=store -c.mac.identity=null",
      "dev": "electron-webpack dev",
      "lint": "eslint 'src/**/*.{js,jsx}' --fix && flow",
      "format": "prettier 'src/**/*.{js,jsx,scss,json}' --write",
