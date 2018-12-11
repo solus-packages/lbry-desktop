@@ -1,8 +1,8 @@
 name       : lbry-desktop
-version    : 0.25.1
-release    : 30
+version    : 0.26.0
+release    : 31
 source     :
-    - https://github.com/lbryio/lbry-desktop/archive/v0.25.1.tar.gz : e3df053041433f4dee5f87d7a10a01fea05ef52bc5eb29261aef09d8546206b0
+    - https://github.com/lbryio/lbry-desktop/archive/v0.26.0.tar.gz : 4ed5f3cf446992e5a7c1f3a668f2ef3acb36f6985e1f4dd4c749554868999ba5
 license    : MIT
 component  : multimedia.video
 networking : yes
@@ -15,6 +15,7 @@ builddeps  :
     - pkgconfig(alsa)
     - pkgconfig(gconf-2.0)
     - pkgconfig(gtk+-2.0)
+    - pkgconfig(gtk+-3.0)
     - pkgconfig(libsecret-1)
     - pkgconfig(xcomposite)
     - pkgconfig(xcursor)

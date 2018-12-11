@@ -1,40 +1,41 @@
-From b0238020ff8aa4c9c1eb8bb88cb707b5eef9cdf0 Mon Sep 17 00:00:00 2001
+From 66f9e29f374b8992f31cc28864252a1e471c08a7 Mon Sep 17 00:00:00 2001
 From: Joshua Strobl <joshua@stroblindustries.com>
-Date: Wed, 29 Aug 2018 22:43:57 +0300
+Date: Tue, 11 Dec 2018 20:57:54 +0200
 Subject: [PATCH 1/1] Force x64 and strip out upgrade prompting.
 
 ---
- package.json                            |  4 ++--
+ package.json                            |  6 ++++--
  src/renderer/component/header/view.jsx  | 12 ------------
- src/renderer/component/splash/view.jsx  |  1 -
+ src/renderer/component/splash/view.jsx  |  3 ---
  src/renderer/modal/modalRouter/view.jsx |  3 ---
- src/renderer/redux/actions/app.js       |  3 ---
- 5 files changed, 2 insertions(+), 21 deletions(-)
+ src/renderer/redux/actions/app.js       | 11 -----------
+ 5 files changed, 4 insertions(+), 31 deletions(-)
 
 diff --git a/package.json b/package.json
-index f34b0e86..d8eeeebb 100644
+index c0c0f2d5..51cc7d45 100644
 --- a/package.json
 +++ b/package.json
-@@ -22,7 +22,7 @@
+@@ -22,14 +22,16 @@
    "scripts": {
      "extract-langs": "node build/extractLocals.js",
      "compile": "electron-webpack && yarn extract-langs",
 -    "build": "yarn compile && electron-builder build",
 +    "build": "yarn compile && electron-builder build --arch=x64",
-     "build:dir": "yarn build -- --dir -c.compression=store -c.mac.identity=null",
++    "build:dir": "yarn build -- --dir -c.compression=store -c.mac.identity=null",
      "dev": "electron-webpack dev",
      "lint": "eslint 'src/**/*.{js,jsx}' --fix && flow",
-@@ -31,7 +31,7 @@
-     "release": "yarn compile && electron-builder build",
+     "format": "prettier 'src/**/*.{js,jsx,scss,json}' --write",
+     "flow-defs": "flow-typed install",
++    "release": "yarn compile && electron-builder build",
      "precommit": "lint-staged",
-     "preinstall": "yarn cache clean lbry-redux",
+     "preinstall": "yarn cache clean lbry-redux && yarn cache clean lbryinc",
 -    "postinstall": "electron-builder install-app-deps && node build/downloadDaemon.js"
 +    "postinstall": "electron-builder install-app-deps --arch=x64 & node build/downloadDaemon.js"
    },
    "dependencies": {
-     "bluebird": "^3.5.1",
+     "@types/three": "^0.93.1",
 diff --git a/src/renderer/component/header/view.jsx b/src/renderer/component/header/view.jsx
-index 372380a8..676b8cb3 100644
+index 560073b9..eae46a2f 100644
 --- a/src/renderer/component/header/view.jsx
 +++ b/src/renderer/component/header/view.jsx
 @@ -31,9 +31,6 @@ const Header = (props: Props) => {
@@ -56,7 +57,7 @@ index 372380a8..676b8cb3 100644
 -          <Button
 -            button="primary"
 -            onClick={downloadUpgradeRequested}
--            icon={icons.DOWNLOAD}
+-            icon={ICONS.DOWNLOAD}
 -            label={__('Upgrade App')}
 -          />
 -        )}
@@ -64,22 +65,31 @@ index 372380a8..676b8cb3 100644
      </header>
    );
 diff --git a/src/renderer/component/splash/view.jsx b/src/renderer/component/splash/view.jsx
-index 708dc731..157d9346 100644
+index caad44c7..8fcdc0a0 100644
 --- a/src/renderer/component/splash/view.jsx
 +++ b/src/renderer/component/splash/view.jsx
-@@ -141,7 +141,6 @@ export class SplashScreen extends React.PureComponent<Props, State> {
-           <React.Fragment>
-             {notificationId === MODALS.WALLET_UNLOCK && <ModalWalletUnlock />}
-             {notificationId === MODALS.INCOMPATIBLE_DAEMON && <ModalIncompatibleDaemon />}
--            {notificationId === MODALS.UPGRADE && <ModalUpgrade />}
-             {notificationId === MODALS.DOWNLOADING && <ModalDownloading />}
-           </React.Fragment>
-         )}
+@@ -5,7 +5,6 @@ import * as MODALS from 'constants/modal_types';
+ import { Lbry } from 'lbry-redux';
+ import ModalWalletUnlock from 'modal/modalWalletUnlock';
+ import ModalIncompatibleDaemon from 'modal/modalIncompatibleDaemon';
+-import ModalUpgrade from 'modal/modalUpgrade';
+ import ModalDownloading from 'modal/modalDownloading';
+ import LoadScreen from './internal/load-screen';
+ 
+@@ -181,8 +180,6 @@ export class SplashScreen extends React.PureComponent<Props, State> {
+         return <ModalIncompatibleDaemon />;
+       case MODALS.WALLET_UNLOCK:
+         return <ModalWalletUnlock />;
+-      case MODALS.UPGRADE:
+-        return <ModalUpgrade />;
+       case MODALS.DOWNLOADING:
+         return <ModalDownloading />;
+       default:
 diff --git a/src/renderer/modal/modalRouter/view.jsx b/src/renderer/modal/modalRouter/view.jsx
-index 34152119..2a848a61 100644
+index ad146a1b..ecdb254a 100644
 --- a/src/renderer/modal/modalRouter/view.jsx
 +++ b/src/renderer/modal/modalRouter/view.jsx
-@@ -5,7 +5,6 @@ import ModalAuthFailure from 'modal/modalAuthFailure';
+@@ -6,7 +6,6 @@ import ModalAuthFailure from 'modal/modalAuthFailure';
  import ModalDownloading from 'modal/modalDownloading';
  import ModalAutoUpdateDownloaded from 'modal/modalAutoUpdateDownloaded';
  import ModalAutoUpdateConfirm from 'modal/modalAutoUpdateConfirm';
@@ -87,23 +97,38 @@ index 34152119..2a848a61 100644
  import ModalWelcome from 'modal/modalWelcome';
  import ModalFirstReward from 'modal/modalFirstReward';
  import ModalRewardApprovalRequired from 'modal/modalRewardApprovalRequired';
-@@ -122,8 +121,6 @@ class ModalRouter extends React.PureComponent<Props> {
-     }
+@@ -134,8 +133,6 @@ class ModalRouter extends React.PureComponent<Props> {
+     const { id, modalProps } = modal;
  
-     switch (notification.id) {
+     switch (id) {
 -      case MODALS.UPGRADE:
--        return <ModalUpgrade {...notificationProps} />;
+-        return <ModalUpgrade {...modalProps} />;
        case MODALS.DOWNLOADING:
-         return <ModalDownloading {...notificationProps} />;
+         return <ModalDownloading {...modalProps} />;
        case MODALS.AUTO_UPDATE_DOWNLOADED:
 diff --git a/src/renderer/redux/actions/app.js b/src/renderer/redux/actions/app.js
-index 7b6e2cc3..1088c4b2 100644
+index beeeb6dd..9c085841 100644
 --- a/src/renderer/redux/actions/app.js
 +++ b/src/renderer/redux/actions/app.js
-@@ -343,9 +343,6 @@ export function doDaemonReady() {
+@@ -217,14 +217,6 @@ export function doCheckUpgradeAvailable() {
+           remoteVersion,
+         },
+       });
+-
+-      if (
+-        upgradeAvailable &&
+-        !selectModal(state) &&
+-        (!selectIsUpgradeSkipped(state) || remoteVersion !== selectRemoteVersion(state))
+-      ) {
+-        dispatch(doOpenModal(MODALS.UPGRADE));
+-      }
+     };
+ 
+     const fail = () => {
+@@ -306,9 +298,6 @@ export function doDaemonReady() {
+     dispatch(doFetchDaemonSettings());
      dispatch(doBalanceSubscribe());
      dispatch(doFetchFileInfosAndPublishedClaims());
-     dispatch(doFetchRewardedContent());
 -    if (!selectIsUpgradeSkipped(state)) {
 -      dispatch(doCheckUpgradeAvailable());
 -    }
@@ -111,5 +136,5 @@ index 7b6e2cc3..1088c4b2 100644
      dispatch(doCheckSubscriptionsInit());
    };
 -- 
-2.18.0
+2.20.0
 
