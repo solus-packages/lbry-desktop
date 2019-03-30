@@ -1,8 +1,8 @@
 name       : lbry-desktop
-version    : 0.29.4
-release    : 39
+version    : 0.31.1
+release    : 40
 source     :
-    - https://github.com/lbryio/lbry-desktop/archive/v0.29.4.tar.gz : 569d7fd1b31556eb2db17bf566e7273432dbd761a163b6028109f9a23bcaf9c6
+    - https://github.com/lbryio/lbry-desktop/archive/v0.31.1.tar.gz : b1f6ac89f836bbd3577ceb3d4d0b70824ed02e2d27f4d83b77b98e5a1418cc6e
 license    : MIT
 component  : multimedia.video
 networking : yes
@@ -13,8 +13,6 @@ replaces   :
     - lbry-app
 builddeps  :
     - pkgconfig(alsa)
-    - pkgconfig(gconf-2.0)
-    - pkgconfig(gtk+-2.0)
     - pkgconfig(gtk+-3.0)
     - pkgconfig(libsecret-1)
     - pkgconfig(xcomposite)
@@ -36,7 +34,7 @@ build      : |
 install    : |
     install -dm00755 $installdir/usr/bin
     install -dm00644 $installdir/usr/share/lbry-desktop
-    cp -R dist/linux-unpacked/* $installdir/usr/share/lbry-desktop/
-    ln -s /usr/share/lbry-desktop/lbry $installdir/usr/bin/lbry
+    cp -R dist/electron/linux-unpacked/* $installdir/usr/share/lbry-desktop/
+    ln -s /usr/share/lbry-desktop/LBRY $installdir/usr/bin/lbry
     install -Dm00644 $pkgfiles/lbry-desktop.desktop $installdir/usr/share/applications/lbry-desktop.desktop
     install -Dm00644 build/icons/256x256.png $installdir/usr/share/pixmaps/lbry.png

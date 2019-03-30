@@ -10,7 +10,7 @@
         <Summary xml:lang="en">This is a graphical browser for the decentralized content marketplace provided by the LBRY protocol</Summary>
         <Description xml:lang="en">This is a graphical browser for the decentralized content marketplace provided by the LBRY protocol.
 </Description>
-        <Archive type="binary" sha1sum="79eb0752a961b8e0d15c77d298c97498fbc89c5a">https://solus-project.com/sources/README.Solus</Archive>
+        <Archive type="binary" sha1sum="79eb0752a961b8e0d15c77d298c97498fbc89c5a">https://getsol.us/sources/README.Solus</Archive>
     </Source>
     <Package>
         <Name>lbry-desktop</Name>
@@ -21,15 +21,16 @@
         <Files>
             <Path fileType="executable">/usr/bin/lbry</Path>
             <Path fileType="data">/usr/share/applications/lbry-desktop.desktop</Path>
+            <Path fileType="data">/usr/share/lbry-desktop/LBRY</Path>
             <Path fileType="data">/usr/share/lbry-desktop/LICENSE.electron.txt</Path>
             <Path fileType="data">/usr/share/lbry-desktop/LICENSES.chromium.html</Path>
-            <Path fileType="data">/usr/share/lbry-desktop/blink_image_resources_200_percent.pak</Path>
-            <Path fileType="data">/usr/share/lbry-desktop/content_resources_200_percent.pak</Path>
-            <Path fileType="data">/usr/share/lbry-desktop/content_shell.pak</Path>
+            <Path fileType="data">/usr/share/lbry-desktop/chrome_100_percent.pak</Path>
+            <Path fileType="data">/usr/share/lbry-desktop/chrome_200_percent.pak</Path>
             <Path fileType="data">/usr/share/lbry-desktop/icudtl.dat</Path>
-            <Path fileType="data">/usr/share/lbry-desktop/lbry</Path>
+            <Path fileType="data">/usr/share/lbry-desktop/libEGL.so</Path>
+            <Path fileType="data">/usr/share/lbry-desktop/libGLESv2.so</Path>
+            <Path fileType="data">/usr/share/lbry-desktop/libVkICD_mock_icd.so</Path>
             <Path fileType="data">/usr/share/lbry-desktop/libffmpeg.so</Path>
-            <Path fileType="data">/usr/share/lbry-desktop/libnode.so</Path>
             <Path fileType="data">/usr/share/lbry-desktop/locales/am.pak</Path>
             <Path fileType="data">/usr/share/lbry-desktop/locales/ar.pak</Path>
             <Path fileType="data">/usr/share/lbry-desktop/locales/bg.pak</Path>
@@ -45,7 +46,6 @@
             <Path fileType="data">/usr/share/lbry-desktop/locales/es.pak</Path>
             <Path fileType="data">/usr/share/lbry-desktop/locales/et.pak</Path>
             <Path fileType="data">/usr/share/lbry-desktop/locales/fa.pak</Path>
-            <Path fileType="data">/usr/share/lbry-desktop/locales/fake-bidi.pak</Path>
             <Path fileType="data">/usr/share/lbry-desktop/locales/fi.pak</Path>
             <Path fileType="data">/usr/share/lbry-desktop/locales/fil.pak</Path>
             <Path fileType="data">/usr/share/lbry-desktop/locales/fr.pak</Path>
@@ -85,40 +85,10 @@
             <Path fileType="data">/usr/share/lbry-desktop/locales/zh-CN.pak</Path>
             <Path fileType="data">/usr/share/lbry-desktop/locales/zh-TW.pak</Path>
             <Path fileType="data">/usr/share/lbry-desktop/natives_blob.bin</Path>
-            <Path fileType="data">/usr/share/lbry-desktop/pdf_viewer_resources.pak</Path>
+            <Path fileType="data">/usr/share/lbry-desktop/resources.pak</Path>
             <Path fileType="data">/usr/share/lbry-desktop/resources/app.asar</Path>
-            <Path fileType="data">/usr/share/lbry-desktop/resources/app.asar.unpacked/node_modules/zstd-codec/.eslintignore</Path>
-            <Path fileType="data">/usr/share/lbry-desktop/resources/app.asar.unpacked/node_modules/zstd-codec/.eslintrc.yml</Path>
-            <Path fileType="data">/usr/share/lbry-desktop/resources/app.asar.unpacked/node_modules/zstd-codec/dist/bundle.js</Path>
-            <Path fileType="data">/usr/share/lbry-desktop/resources/app.asar.unpacked/node_modules/zstd-codec/dist/dance_yorokobi_mai_woman.bmp.zst</Path>
-            <Path fileType="data">/usr/share/lbry-desktop/resources/app.asar.unpacked/node_modules/zstd-codec/dist/index.html</Path>
-            <Path fileType="data">/usr/share/lbry-desktop/resources/app.asar.unpacked/node_modules/zstd-codec/dist/sample-books.json.zst</Path>
-            <Path fileType="data">/usr/share/lbry-desktop/resources/app.asar.unpacked/node_modules/zstd-codec/dist/sample-dict</Path>
-            <Path fileType="data">/usr/share/lbry-desktop/resources/app.asar.unpacked/node_modules/zstd-codec/dist/test.json</Path>
-            <Path fileType="data">/usr/share/lbry-desktop/resources/app.asar.unpacked/node_modules/zstd-codec/index-local.js</Path>
-            <Path fileType="data">/usr/share/lbry-desktop/resources/app.asar.unpacked/node_modules/zstd-codec/index.js</Path>
-            <Path fileType="data">/usr/share/lbry-desktop/resources/app.asar.unpacked/node_modules/zstd-codec/lib/__tests__/.eslintrc.yml</Path>
-            <Path fileType="data">/usr/share/lbry-desktop/resources/app.asar.unpacked/node_modules/zstd-codec/lib/__tests__/fixtures/dance_yorokobi_mai_man.bmp</Path>
-            <Path fileType="data">/usr/share/lbry-desktop/resources/app.asar.unpacked/node_modules/zstd-codec/lib/__tests__/fixtures/dance_yorokobi_mai_man.bmp.zst</Path>
-            <Path fileType="data">/usr/share/lbry-desktop/resources/app.asar.unpacked/node_modules/zstd-codec/lib/__tests__/fixtures/dance_yorokobi_mai_woman.bmp</Path>
-            <Path fileType="data">/usr/share/lbry-desktop/resources/app.asar.unpacked/node_modules/zstd-codec/lib/__tests__/fixtures/dance_yorokobi_mai_woman.bmp.zst</Path>
-            <Path fileType="data">/usr/share/lbry-desktop/resources/app.asar.unpacked/node_modules/zstd-codec/lib/__tests__/fixtures/lorem.txt</Path>
-            <Path fileType="data">/usr/share/lbry-desktop/resources/app.asar.unpacked/node_modules/zstd-codec/lib/__tests__/fixtures/lorem.txt.zst</Path>
-            <Path fileType="data">/usr/share/lbry-desktop/resources/app.asar.unpacked/node_modules/zstd-codec/lib/__tests__/fixtures/sample-books.json</Path>
-            <Path fileType="data">/usr/share/lbry-desktop/resources/app.asar.unpacked/node_modules/zstd-codec/lib/__tests__/fixtures/sample-dict</Path>
-            <Path fileType="data">/usr/share/lbry-desktop/resources/app.asar.unpacked/node_modules/zstd-codec/lib/__tests__/zstd-codec.js</Path>
-            <Path fileType="data">/usr/share/lbry-desktop/resources/app.asar.unpacked/node_modules/zstd-codec/lib/__tests__/zstd-stream.js</Path>
-            <Path fileType="data">/usr/share/lbry-desktop/resources/app.asar.unpacked/node_modules/zstd-codec/lib/constants.js</Path>
-            <Path fileType="data">/usr/share/lbry-desktop/resources/app.asar.unpacked/node_modules/zstd-codec/lib/helpers.js</Path>
-            <Path fileType="data">/usr/share/lbry-desktop/resources/app.asar.unpacked/node_modules/zstd-codec/lib/module.js</Path>
-            <Path fileType="data">/usr/share/lbry-desktop/resources/app.asar.unpacked/node_modules/zstd-codec/lib/zstd-codec-binding-wasm.js</Path>
-            <Path fileType="data">/usr/share/lbry-desktop/resources/app.asar.unpacked/node_modules/zstd-codec/lib/zstd-codec-binding.js</Path>
-            <Path fileType="data">/usr/share/lbry-desktop/resources/app.asar.unpacked/node_modules/zstd-codec/lib/zstd-codec.js</Path>
-            <Path fileType="data">/usr/share/lbry-desktop/resources/app.asar.unpacked/node_modules/zstd-codec/lib/zstd-stream.js</Path>
-            <Path fileType="data">/usr/share/lbry-desktop/resources/app.asar.unpacked/node_modules/zstd-codec/package.json</Path>
             <Path fileType="data">/usr/share/lbry-desktop/resources/electron.asar</Path>
             <Path fileType="data">/usr/share/lbry-desktop/resources/static/daemon/lbrynet</Path>
-            <Path fileType="data">/usr/share/lbry-desktop/resources/static/favicon.ico</Path>
             <Path fileType="data">/usr/share/lbry-desktop/resources/static/font/inter/400.woff</Path>
             <Path fileType="data">/usr/share/lbry-desktop/resources/static/font/inter/400.woff2</Path>
             <Path fileType="data">/usr/share/lbry-desktop/resources/static/font/inter/400i.woff</Path>
@@ -145,10 +115,7 @@
             <Path fileType="data">/usr/share/lbry-desktop/resources/static/font/inter/900i.woff2</Path>
             <Path fileType="data">/usr/share/lbry-desktop/resources/static/font/inter/inter-ui.css</Path>
             <Path fileType="data">/usr/share/lbry-desktop/resources/static/font/inter/variable.woff2</Path>
-            <Path fileType="data">/usr/share/lbry-desktop/resources/static/img/Free-speech-flag.svg</Path>
-            <Path fileType="data">/usr/share/lbry-desktop/resources/static/img/broken.png</Path>
             <Path fileType="data">/usr/share/lbry-desktop/resources/static/img/busy.gif</Path>
-            <Path fileType="data">/usr/share/lbry-desktop/resources/static/img/default-thumb.svg</Path>
             <Path fileType="data">/usr/share/lbry-desktop/resources/static/img/fav/32x32.png</Path>
             <Path fileType="data">/usr/share/lbry-desktop/resources/static/img/fav/android-chrome-144x144.png</Path>
             <Path fileType="data">/usr/share/lbry-desktop/resources/static/img/fav/android-chrome-192x192.png</Path>
@@ -181,30 +148,17 @@
             <Path fileType="data">/usr/share/lbry-desktop/resources/static/img/fav/mstile-310x150.png</Path>
             <Path fileType="data">/usr/share/lbry-desktop/resources/static/img/fav/mstile-310x310.png</Path>
             <Path fileType="data">/usr/share/lbry-desktop/resources/static/img/fav/mstile-70x70.png</Path>
-            <Path fileType="data">/usr/share/lbry-desktop/resources/static/img/gerbil-happy.png</Path>
-            <Path fileType="data">/usr/share/lbry-desktop/resources/static/img/gerbil-sad.png</Path>
-            <Path fileType="data">/usr/share/lbry-desktop/resources/static/img/lbry-bg.png</Path>
-            <Path fileType="data">/usr/share/lbry-desktop/resources/static/img/lbry-dark-1600x528.png</Path>
-            <Path fileType="data">/usr/share/lbry-desktop/resources/static/img/lbry-white-485x160.png</Path>
-            <Path fileType="data">/usr/share/lbry-desktop/resources/static/img/lbry-white-909x300.png</Path>
-            <Path fileType="data">/usr/share/lbry-desktop/resources/static/img/no-thumbnail.png</Path>
-            <Path fileType="data">/usr/share/lbry-desktop/resources/static/img/placeholder.png</Path>
-            <Path fileType="data">/usr/share/lbry-desktop/resources/static/img/stripe-background.png</Path>
+            <Path fileType="data">/usr/share/lbry-desktop/resources/static/img/favicon.ico</Path>
             <Path fileType="data">/usr/share/lbry-desktop/resources/static/img/tray/default/tray.png</Path>
             <Path fileType="data">/usr/share/lbry-desktop/resources/static/img/tray/mac/trayTemplate.png</Path>
             <Path fileType="data">/usr/share/lbry-desktop/resources/static/img/tray/mac/trayTemplate@2x.png</Path>
             <Path fileType="data">/usr/share/lbry-desktop/resources/static/img/tray/windows/tray.ico</Path>
-            <Path fileType="data">/usr/share/lbry-desktop/resources/static/img/untitled folder/trayTemplate.png</Path>
-            <Path fileType="data">/usr/share/lbry-desktop/resources/static/img/untitled folder/trayTemplate@2x.png</Path>
-            <Path fileType="data">/usr/share/lbry-desktop/resources/static/img/warning.png</Path>
-            <Path fileType="data">/usr/share/lbry-desktop/resources/static/locales/en.json</Path>
-            <Path fileType="data">/usr/share/lbry-desktop/resources/static/quit.html</Path>
-            <Path fileType="data">/usr/share/lbry-desktop/resources/static/requirements.txt</Path>
-            <Path fileType="data">/usr/share/lbry-desktop/resources/static/upgrade.html</Path>
-            <Path fileType="data">/usr/share/lbry-desktop/resources/static/warning.html</Path>
+            <Path fileType="data">/usr/share/lbry-desktop/resources/static/index.dev.html</Path>
+            <Path fileType="data">/usr/share/lbry-desktop/resources/static/index.html</Path>
             <Path fileType="data">/usr/share/lbry-desktop/snapshot_blob.bin</Path>
-            <Path fileType="data">/usr/share/lbry-desktop/ui_resources_200_percent.pak</Path>
-            <Path fileType="data">/usr/share/lbry-desktop/views_resources_200_percent.pak</Path>
+            <Path fileType="data">/usr/share/lbry-desktop/swiftshader/libEGL.so</Path>
+            <Path fileType="data">/usr/share/lbry-desktop/swiftshader/libGLESv2.so</Path>
+            <Path fileType="data">/usr/share/lbry-desktop/v8_context_snapshot.bin</Path>
             <Path fileType="data">/usr/share/pixmaps/lbry.png</Path>
         </Files>
         <Replaces>
@@ -212,9 +166,9 @@
         </Replaces>
     </Package>
     <History>
-        <Update release="39">
-            <Date>2019-03-13</Date>
-            <Version>0.29.4</Version>
+        <Update release="40">
+            <Date>2019-03-30</Date>
+            <Version>0.31.1</Version>
             <Comment>Packaging update</Comment>
             <Name>Joshua Strobl</Name>
             <Email>joshua@stroblindustries.com</Email>

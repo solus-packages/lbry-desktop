@@ -1,29 +1,27 @@
-From e02a6371d43ecf73240b5f6bb60e22567bbbef73 Mon Sep 17 00:00:00 2001
+From bfc73ad7d7ef6052e9d948344b6d7936d162c3df Mon Sep 17 00:00:00 2001
 From: Joshua Strobl <joshua@stroblindustries.com>
-Date: Fri, 22 Feb 2019 13:06:29 +0200
+Date: Mon, 25 Mar 2019 13:11:28 +0100
 Subject: [PATCH 1/1] Force x64 and strip out upgrade prompting.
 
 ---
- package.json                            |  5 +-
- src/renderer/component/header/view.jsx  | 13 -----
- src/renderer/component/splash/view.jsx  |  3 --
- src/renderer/modal/modalRouter/view.jsx |  3 --
- src/renderer/redux/actions/app.js       | 66 -------------------------
- 5 files changed, 3 insertions(+), 87 deletions(-)
+ package.json                      |  5 ++-
+ src/ui/component/header/view.jsx  | 12 ------
+ src/ui/component/splash/view.jsx  |  3 --
+ src/ui/modal/modalRouter/view.jsx |  3 --
+ src/ui/redux/actions/app.js       | 66 -------------------------------
+ 5 files changed, 3 insertions(+), 86 deletions(-)
 
 diff --git a/package.json b/package.json
-index b1fbffbe..6ef83c51 100644
+index 5f1bbcbf..f18fee07 100644
 --- a/package.json
 +++ b/package.json
-@@ -22,16 +22,17 @@
-   "scripts": {
-     "extract-langs": "node build/extractLocals.js",
-     "compile": "electron-webpack && yarn extract-langs",
+@@ -31,14 +31,15 @@
+     "run:web": "cross-env NODE_ENV=production yarn compile:web && node ./dist/web/server.js",
+     "pack": "electron-builder --dir",
+     "dist": "electron-builder",
 -    "build": "yarn compile && electron-builder build",
 +    "build": "yarn compile && electron-builder build --arch=x64",
      "build:dir": "yarn build -- --dir -c.compression=store -c.mac.identity=null",
-     "dev": "electron-webpack dev",
-     "dev:internal-apis": "LBRY_API_URL='http://localhost:8080' yarn dev",
      "lint": "eslint 'src/**/*.{js,jsx}' --fix && flow",
      "format": "prettier 'src/**/*.{js,jsx,scss,json}' --write",
      "flow-defs": "flow-typed install",
@@ -31,14 +29,14 @@ index b1fbffbe..6ef83c51 100644
      "precommit": "lint-staged",
      "preinstall": "yarn cache clean lbry-redux && yarn cache clean lbryinc",
 -    "postinstall": "electron-builder install-app-deps && node build/downloadDaemon.js"
-+    "postinstall": "electron-builder install-app-deps --arch=x64 & node build/downloadDaemon.js"
++    "postinstall": "electron-builder install-app-deps --arch=x64 && node build/downloadDaemon.js"
    },
    "dependencies": {
-     "@lbry/components": "^2.2.4",
-diff --git a/src/renderer/component/header/view.jsx b/src/renderer/component/header/view.jsx
-index 8bdbdef3..7828dec0 100644
---- a/src/renderer/component/header/view.jsx
-+++ b/src/renderer/component/header/view.jsx
+     "electron-dl": "^1.11.0",
+diff --git a/src/ui/component/header/view.jsx b/src/ui/component/header/view.jsx
+index a7eb1c10..f2c2690d 100644
+--- a/src/ui/component/header/view.jsx
++++ b/src/ui/component/header/view.jsx
 @@ -32,9 +32,6 @@ const Header = (props: Props) => {
      isForwardDisabled,
    } = props;
@@ -49,11 +47,10 @@ index 8bdbdef3..7828dec0 100644
    return (
      <header className="header">
        <div className="header__navigation">
-@@ -100,16 +97,6 @@ const Header = (props: Props) => {
-           label={isUpgradeAvailable ? '' : __('Publish')}
-           onClick={() => navigate('/publish')}
-         />
--
+@@ -99,15 +96,6 @@ const Header = (props: Props) => {
+ 
+         {/* @if TARGET='app' */}
+ 
 -        {showUpgradeButton && (
 -          <Button
 -            className="header__navigation-item header__navigation-item--right-action"
@@ -63,13 +60,13 @@ index 8bdbdef3..7828dec0 100644
 -            onClick={downloadUpgradeRequested}
 -          />
 -        )}
+         {/* @endif */}
        </div>
      </header>
-   );
-diff --git a/src/renderer/component/splash/view.jsx b/src/renderer/component/splash/view.jsx
-index 9ff4ed68..909005ee 100644
---- a/src/renderer/component/splash/view.jsx
-+++ b/src/renderer/component/splash/view.jsx
+diff --git a/src/ui/component/splash/view.jsx b/src/ui/component/splash/view.jsx
+index be536f59..2581e08a 100644
+--- a/src/ui/component/splash/view.jsx
++++ b/src/ui/component/splash/view.jsx
 @@ -5,7 +5,6 @@ import * as MODALS from 'constants/modal_types';
  import { Lbry } from 'lbry-redux';
  import ModalWalletUnlock from 'modal/modalWalletUnlock';
@@ -78,7 +75,7 @@ index 9ff4ed68..909005ee 100644
  import ModalDownloading from 'modal/modalDownloading';
  import LoadScreen from './internal/load-screen';
  
-@@ -202,8 +201,6 @@ export default class SplashScreen extends React.PureComponent<Props, State> {
+@@ -199,8 +198,6 @@ export default class SplashScreen extends React.PureComponent<Props, State> {
          return <ModalIncompatibleDaemon onContinueAnyway={this.runWithIncompatibleDaemon} />;
        case MODALS.WALLET_UNLOCK:
          return <ModalWalletUnlock />;
@@ -87,10 +84,10 @@ index 9ff4ed68..909005ee 100644
        case MODALS.DOWNLOADING:
          return <ModalDownloading />;
        default:
-diff --git a/src/renderer/modal/modalRouter/view.jsx b/src/renderer/modal/modalRouter/view.jsx
-index 6ed273f4..89732857 100644
---- a/src/renderer/modal/modalRouter/view.jsx
-+++ b/src/renderer/modal/modalRouter/view.jsx
+diff --git a/src/ui/modal/modalRouter/view.jsx b/src/ui/modal/modalRouter/view.jsx
+index 2292c655..d623a186 100644
+--- a/src/ui/modal/modalRouter/view.jsx
++++ b/src/ui/modal/modalRouter/view.jsx
 @@ -6,7 +6,6 @@ import ModalAuthFailure from 'modal/modalAuthFailure';
  import ModalDownloading from 'modal/modalDownloading';
  import ModalAutoUpdateDownloaded from 'modal/modalAutoUpdateDownloaded';
@@ -99,7 +96,7 @@ index 6ed273f4..89732857 100644
  import ModalWelcome from 'modal/modalWelcome';
  import ModalFirstReward from 'modal/modalFirstReward';
  import ModalRewardApprovalRequired from 'modal/modalRewardApprovalRequired';
-@@ -127,8 +126,6 @@ class ModalRouter extends React.PureComponent<Props, State> {
+@@ -130,8 +129,6 @@ class ModalRouter extends React.PureComponent<Props, State> {
      const { id, modalProps } = modal;
  
      switch (id) {
@@ -108,11 +105,11 @@ index 6ed273f4..89732857 100644
        case MODALS.DOWNLOADING:
          return <ModalDownloading {...modalProps} />;
        case MODALS.AUTO_UPDATE_DOWNLOADED:
-diff --git a/src/renderer/redux/actions/app.js b/src/renderer/redux/actions/app.js
-index cf347fa6..b2bf9f5f 100644
---- a/src/renderer/redux/actions/app.js
-+++ b/src/renderer/redux/actions/app.js
-@@ -191,68 +191,6 @@ export function doCancelUpgrade() {
+diff --git a/src/ui/redux/actions/app.js b/src/ui/redux/actions/app.js
+index 4344320a..6040727f 100644
+--- a/src/ui/redux/actions/app.js
++++ b/src/ui/redux/actions/app.js
+@@ -196,68 +196,6 @@ export function doCancelUpgrade() {
    };
  }
  
@@ -180,18 +177,18 @@ index cf347fa6..b2bf9f5f 100644
 -
  export function doCheckDaemonVersion() {
    return dispatch => {
-     Lbry.version().then(({ lbrynet_version: lbrynetVersion }) => {
-@@ -306,10 +244,6 @@ export function doDaemonReady() {
-     dispatch(doFetchDaemonSettings());
+     // @if TARGET='app'
+@@ -319,10 +257,6 @@ export function doDaemonReady() {
      dispatch(doBalanceSubscribe());
+     // @if TARGET='app'
      dispatch(doFetchFileInfosAndPublishedClaims());
 -    if (!selectIsUpgradeSkipped(state)) {
 -      dispatch(doCheckUpgradeAvailable());
 -    }
 -    dispatch(doCheckUpgradeSubscribe());
      dispatch(doCheckSubscriptionsInit());
+     // @endif
    };
- }
 -- 
 2.21.0
 
