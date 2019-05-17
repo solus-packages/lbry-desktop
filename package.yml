@@ -1,13 +1,12 @@
 name       : lbry-desktop
-version    : 0.31.1
-release    : 41
+version    : 0.32.1
+release    : 42
 source     :
-    - https://github.com/lbryio/lbry-desktop/archive/v0.31.1.tar.gz : b1f6ac89f836bbd3577ceb3d4d0b70824ed02e2d27f4d83b77b98e5a1418cc6e
+    - https://github.com/lbryio/lbry-desktop/archive/v0.32.1.tar.gz : 38c6cf7e668ff0c47bf4835d3c56d05cfb024912e184aaf08d0c74295e9f4aaf
 license    : MIT
 component  : multimedia.video
 networking : yes
-summary    : This is a graphical browser for the decentralized content marketplace
-    provided by the LBRY protocol
+summary    : This is a graphical browser for the decentralized content marketplace provided by the LBRY protocol
 description: |
     This is a graphical browser for the decentralized content marketplace provided by the LBRY protocol.
 replaces   :
