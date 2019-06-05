@@ -1,18 +1,18 @@
-From 8bdbc6822706ae77de7ee8767707f039610ce648 Mon Sep 17 00:00:00 2001
+From f033c87512754e37f1434a8d3e3e74e121ee9ce0 Mon Sep 17 00:00:00 2001
 From: Joshua Strobl <joshua@stroblindustries.com>
-Date: Fri, 17 May 2019 05:59:26 +0300
+Date: Wed, 5 Jun 2019 15:57:28 +0300
 Subject: [PATCH 1/1] Force x64 and strip out upgrade prompting.
 
 ---
  package.json                      |   5 +-
- src/ui/component/header/view.jsx  |  13 -
+ src/ui/component/header/view.jsx  |  15 ---
  src/ui/component/splash/view.jsx  |   3 -
  src/ui/modal/modalRouter/view.jsx |   3 -
- src/ui/redux/actions/app.js       | 527 +++++++++++++-----------------
- 5 files changed, 235 insertions(+), 316 deletions(-)
+ src/ui/redux/actions/app.js       | 212 ------------------------------
+ 5 files changed, 3 insertions(+), 235 deletions(-)
 
 diff --git a/package.json b/package.json
-index 9995e0e7..b0589d85 100644
+index c19c2f56..2b8eb4b1 100644
 --- a/package.json
 +++ b/package.json
 @@ -30,14 +30,15 @@
@@ -22,22 +22,31 @@ index 9995e0e7..b0589d85 100644
 -    "build": "cross-env NODE_ENV=production yarn compile:electron && electron-builder build",
 +    "build": "cross-env NODE_ENV=production yarn compile:electron && electron-builder build--arch=x64",
      "build:dir": "yarn build -- --dir -c.compression=store -c.mac.identity=null",
++    "release": "yarn compile && electron-builder build",
      "lint": "eslint 'src/**/*.{js,jsx}' --fix && flow",
      "format": "prettier 'src/**/*.{js,jsx,scss,json}' --write",
      "flow-defs": "flow-typed install",
-+    "release": "yarn compile && electron-builder build",
      "precommit": "lint-staged",
      "preinstall": "yarn cache clean lbry-redux && yarn cache clean lbryinc",
--    "postinstall": "electron-builder install-app-deps && node build/downloadDaemon.js"
+-    "postinstall": "electron-builder install-app-deps && node ./build/downloadDaemon.js"
 +    "postinstall": "electron-builder install-app-deps --arch=x64 && node build/downloadDaemon.js"
    },
    "dependencies": {
-     "@reach/rect": "^0.2.1",
+     "electron-dl": "^1.11.0",
 diff --git a/src/ui/component/header/view.jsx b/src/ui/component/header/view.jsx
-index 4f8fa525..1189ecec 100644
+index 4f8fa525..a33a6b64 100644
 --- a/src/ui/component/header/view.jsx
 +++ b/src/ui/component/header/view.jsx
-@@ -95,19 +95,6 @@ const Header = (props: Props) => {
+@@ -31,8 +31,6 @@ const Header = (props: Props) => {
+     isForwardDisabled,
+   } = props;
+ 
+-  const showUpgradeButton = autoUpdateDownloaded || (process.platform === 'linux' && isUpgradeAvailable);
+-
+   return (
+     <header className="header">
+       <div className="header__navigation">
+@@ -95,19 +93,6 @@ const Header = (props: Props) => {
            label={isUpgradeAvailable ? '' : __('Publish')}
            navigate="/$/publish"
          />
@@ -79,18 +88,18 @@ index 5615dde2..fc4b88b1 100644
          return <ModalDownloading />;
        default:
 diff --git a/src/ui/modal/modalRouter/view.jsx b/src/ui/modal/modalRouter/view.jsx
-index 90e524f3..8c4bbf72 100644
+index af910c61..b6d9f2b6 100644
 --- a/src/ui/modal/modalRouter/view.jsx
 +++ b/src/ui/modal/modalRouter/view.jsx
-@@ -6,7 +6,6 @@ import ModalAuthFailure from 'modal/modalAuthFailure';
- import ModalDownloading from 'modal/modalDownloading';
+@@ -7,7 +7,6 @@ import ModalDownloading from 'modal/modalDownloading';
+ import ModalAutoGenerateThumbnail from 'modal/modalAutoGenerateThumbnail';
  import ModalAutoUpdateDownloaded from 'modal/modalAutoUpdateDownloaded';
  import ModalAutoUpdateConfirm from 'modal/modalAutoUpdateConfirm';
 -import ModalUpgrade from 'modal/modalUpgrade';
  import ModalWelcome from 'modal/modalWelcome';
  import ModalFirstReward from 'modal/modalFirstReward';
  import ModalRewardApprovalRequired from 'modal/modalRewardApprovalRequired';
-@@ -47,8 +46,6 @@ function ModalRouter(props: Props) {
+@@ -48,8 +47,6 @@ function ModalRouter(props: Props) {
    const { id, modalProps } = modal;
  
    switch (id) {
@@ -98,104 +107,57 @@ index 90e524f3..8c4bbf72 100644
 -      return <ModalUpgrade {...modalProps} />;
      case MODALS.DOWNLOADING:
        return <ModalDownloading {...modalProps} />;
-     case MODALS.AUTO_UPDATE_DOWNLOADED:
+     case MODALS.AUTO_GENERATE_THUMBNAIL:
 diff --git a/src/ui/redux/actions/app.js b/src/ui/redux/actions/app.js
-index 4be100b6..02189793 100644
+index 4be100b6..b59f48f3 100644
 --- a/src/ui/redux/actions/app.js
 +++ b/src/ui/redux/actions/app.js
-@@ -11,15 +11,15 @@ import Native from 'native';
+@@ -11,7 +11,6 @@ import Native from 'native';
  import { doFetchDaemonSettings } from 'redux/actions/settings';
  import { doCheckSubscriptionsInit } from 'redux/actions/subscriptions';
  import {
 -  selectIsUpgradeSkipped,
--  selectUpdateUrl,
--  selectUpgradeDownloadItem,
--  selectUpgradeDownloadPath,
--  selectUpgradeFilename,
--  selectAutoUpdateDeclined,
--  selectRemoteVersion,
--  selectUpgradeTimer,
--  selectModal,
-+    selectIsUpgradeSkipped,
-+    selectUpdateUrl,
-+    selectUpgradeDownloadItem,
-+    selectUpgradeDownloadPath,
-+    selectUpgradeFilename,
-+    selectAutoUpdateDeclined,
-+    selectRemoteVersion,
-+    selectUpgradeTimer,
-+    selectModal,
- } from 'redux/selectors/app';
- import { doAuthenticate } from 'lbryinc';
- import { lbrySettings as config, version as appVersion } from 'package.json';
-@@ -34,371 +34,308 @@ const Fs = remote.require('fs');
- const CHECK_UPGRADE_INTERVAL = 10 * 60 * 1000;
+   selectUpdateUrl,
+   selectUpgradeDownloadItem,
+   selectUpgradeDownloadPath,
+@@ -31,8 +30,6 @@ const { download } = remote.require('electron-dl');
+ const Fs = remote.require('fs');
+ // @endif
  
+-const CHECK_UPGRADE_INTERVAL = 10 * 60 * 1000;
+-
  export function doOpenModal(id, modalProps = {}) {
--  return {
--    type: ACTIONS.SHOW_MODAL,
--    data: {
--      id,
--      modalProps,
--    },
--  };
-+    return {
-+        type: ACTIONS.SHOW_MODAL,
-+        data: {
-+            id,
-+            modalProps,
-+        },
-+    };
+   return {
+     type: ACTIONS.SHOW_MODAL,
+@@ -49,211 +46,6 @@ export function doHideModal() {
+   };
  }
  
- export function doHideModal() {
--  return {
--    type: ACTIONS.HIDE_MODAL,
--  };
-+    return {
-+        type: ACTIONS.HIDE_MODAL,
-+    };
- }
- 
- export function doUpdateDownloadProgress(percent) {
+-export function doUpdateDownloadProgress(percent) {
 -  return {
 -    type: ACTIONS.UPGRADE_DOWNLOAD_PROGRESSED,
 -    data: {
 -      percent,
 -    },
 -  };
-+    return {
-+        type: ACTIONS.UPGRADE_DOWNLOAD_PROGRESSED,
-+        data: {
-+            percent,
-+        },
-+    };
- }
- 
- export function doSkipUpgrade() {
+-}
+-
+-export function doSkipUpgrade() {
 -  return {
 -    type: ACTIONS.SKIP_UPGRADE,
 -  };
-+    return {
-+        type: ACTIONS.SKIP_UPGRADE,
-+    };
- }
- 
- export function doStartUpgrade() {
+-}
+-
+-export function doStartUpgrade() {
 -  return (dispatch, getState) => {
 -    const state = getState();
 -    const upgradeDownloadPath = selectUpgradeDownloadPath(state);
-+    return (dispatch, getState) => {
-+        const state = getState();
-+        const upgradeDownloadPath = selectUpgradeDownloadPath(state);
- 
+-
 -    ipcRenderer.send('upgrade', upgradeDownloadPath);
 -  };
-+        ipcRenderer.send('upgrade', upgradeDownloadPath);
-+    };
- }
- 
- export function doDownloadUpgrade() {
+-}
+-
+-export function doDownloadUpgrade() {
 -  return (dispatch, getState) => {
 -    // @if TARGET='app'
 -    const state = getState();
@@ -206,40 +168,7 @@ index 4be100b6..02189793 100644
 -    const options = {
 -      onProgress: p => dispatch(doUpdateDownloadProgress(Math.round(p * 100))),
 -      directory: dir,
-+    return (dispatch, getState) => {
-+        // @if TARGET='app'
-+        const state = getState();
-+        // Make a new directory within temp directory so the filename is guaranteed to be available
-+        const dir = Fs.mkdtempSync(remote.app.getPath('temp') + path.sep);
-+        const upgradeFilename = selectUpgradeFilename(state);
-+
-+        const options = {
-+            onProgress: p => dispatch(doUpdateDownloadProgress(Math.round(p * 100))),
-+            directory: dir,
-+        };
-+        download(remote.getCurrentWindow(), selectUpdateUrl(state), options).then(downloadItem => {
-+            /**
-+             * TODO: get the download path directly from the download object. It should just be
-+             * downloadItem.getSavePath(), but the copy on the main process is being garbage collected
-+             * too soon.
-+             */
-+
-+            dispatch({
-+                type: ACTIONS.UPGRADE_DOWNLOAD_COMPLETED,
-+                data: {
-+                    downloadItem,
-+                    path: path.join(dir, upgradeFilename),
-+                },
-+            });
-+        });
-+
-+        dispatch({
-+            type: ACTIONS.UPGRADE_DOWNLOAD_STARTED,
-+        });
-+        dispatch(doHideModal());
-+        dispatch(doOpenModal(MODALS.DOWNLOADING));
-+        // @endif
-     };
+-    };
 -    download(remote.getCurrentWindow(), selectUpdateUrl(state), options).then(downloadItem => {
 -      /**
 -       * TODO: get the download path directly from the download object. It should just be
@@ -263,9 +192,9 @@ index 4be100b6..02189793 100644
 -    dispatch(doOpenModal(MODALS.DOWNLOADING));
 -    // @endif
 -  };
- }
- 
- export function doDownloadUpgradeRequested() {
+-}
+-
+-export function doDownloadUpgradeRequested() {
 -  // This means the user requested an upgrade by clicking the "upgrade" button in the navbar.
 -  // If on Mac and Windows, we do some new behavior for the auto-update system.
 -  // This will probably be reorganized once we get auto-update going on Linux and remove
@@ -291,34 +220,9 @@ index 4be100b6..02189793 100644
 -      dispatch(doDownloadUpgrade());
 -    }
 -  };
-+    // This means the user requested an upgrade by clicking the "upgrade" button in the navbar.
-+    // If on Mac and Windows, we do some new behavior for the auto-update system.
-+    // This will probably be reorganized once we get auto-update going on Linux and remove
-+    // the old logic.
-+
-+    return (dispatch, getState) => {
-+        const state = getState();
-+
-+        const autoUpdateDeclined = selectAutoUpdateDeclined(state);
-+
-+        if (['win32', 'darwin'].includes(process.platform)) {
-+            // electron-updater behavior
-+            if (autoUpdateDeclined) {
-+                // The user declined an update before, so show the "confirm" dialog
-+                dispatch(doOpenModal(MODALS.AUTO_UPDATE_CONFIRM));
-+            } else {
-+                // The user was never shown the original update dialog (e.g. because they were
-+                // watching a video). So show the inital "update downloaded" dialog.
-+                dispatch(doOpenModal(MODALS.AUTO_UPDATE_DOWNLOADED));
-+            }
-+        } else {
-+            // Old behavior for Linux
-+            dispatch(doDownloadUpgrade());
-+        }
-+    };
- }
- 
- export function doClearUpgradeTimer() {
+-}
+-
+-export function doClearUpgradeTimer() {
 -  return (dispatch, getState) => {
 -    const state = getState();
 -
@@ -329,54 +233,31 @@ index 4be100b6..02189793 100644
 -      });
 -    }
 -  };
-+    return (dispatch, getState) => {
-+        const state = getState();
-+
-+        if (selectUpgradeTimer(state)) {
-+            clearInterval(selectUpgradeTimer(state));
-+            dispatch({
-+                type: ACTIONS.CLEAR_UPGRADE_TIMER,
-+            });
-+        }
-+    };
- }
- 
- export function doAutoUpdate() {
+-}
+-
+-export function doAutoUpdate() {
 -  return dispatch => {
 -    dispatch({
 -      type: ACTIONS.AUTO_UPDATE_DOWNLOADED,
 -    });
-+    return dispatch => {
-+        dispatch({
-+            type: ACTIONS.AUTO_UPDATE_DOWNLOADED,
-+        });
- 
+-
 -    dispatch(doOpenModal(MODALS.AUTO_UPDATE_DOWNLOADED));
-+        dispatch(doOpenModal(MODALS.AUTO_UPDATE_DOWNLOADED));
- 
+-
 -    dispatch(doClearUpgradeTimer());
 -  };
-+        dispatch(doClearUpgradeTimer());
-+    };
- }
- 
- export function doAutoUpdateDeclined() {
+-}
+-
+-export function doAutoUpdateDeclined() {
 -  return dispatch => {
 -    dispatch(doClearUpgradeTimer());
-+    return dispatch => {
-+        dispatch(doClearUpgradeTimer());
- 
+-
 -    dispatch({
 -      type: ACTIONS.AUTO_UPDATE_DECLINED,
 -    });
 -  };
-+        dispatch({
-+            type: ACTIONS.AUTO_UPDATE_DECLINED,
-+        });
-+    };
- }
- 
- export function doCancelUpgrade() {
+-}
+-
+-export function doCancelUpgrade() {
 -  return (dispatch, getState) => {
 -    const state = getState();
 -    const upgradeDownloadItem = selectUpgradeDownloadItem(state);
@@ -433,29 +314,12 @@ index 4be100b6..02189793 100644
 -        dispatch(doOpenModal(MODALS.UPGRADE));
 -      }
 -    };
-+    return (dispatch, getState) => {
-+        const state = getState();
-+        const upgradeDownloadItem = selectUpgradeDownloadItem(state);
-+
-+        if (upgradeDownloadItem) {
-+            /*
-+             * Right now the remote reference to the download item gets garbage collected as soon as the
-+             * the download is over (maybe even earlier), so trying to cancel a finished download may
-+             * throw an error.
-+             */
-+            try {
-+                upgradeDownloadItem.cancel();
-+            } catch (err) {
-+                console.error(err);
-+            }
-+        }
- 
+-
 -    const fail = () => {
 -      dispatch({
 -        type: ACTIONS.CHECK_UPGRADE_FAIL,
 -      });
-+        dispatch({ type: ACTIONS.UPGRADE_CANCELLED });
-     };
+-    };
 -
 -    Native.getAppVersionInfo().then(success, fail);
 -  };
@@ -472,257 +336,22 @@ index 4be100b6..02189793 100644
 -      data: { checkUpgradeTimer },
 -    });
 -  };
- }
- 
+-}
+-
  export function doCheckDaemonVersion() {
--  return dispatch => {
--    // @if TARGET='app'
--    Lbry.version().then(({ lbrynet_version: lbrynetVersion }) => {
--      // Avoid the incompatible daemon modal if running in dev mode
--      // Lets you  run a different daemon than the one specified in package.json
--      if (config.lbrynetDaemonVersion === lbrynetVersion) {
--        return dispatch({
--          type: ACTIONS.DAEMON_VERSION_MATCH,
-+    return dispatch => {
-+        // @if TARGET='app'
-+        Lbry.version().then(({ lbrynet_version: lbrynetVersion }) => {
-+            // Avoid the incompatible daemon modal if running in dev mode
-+            // Lets you  run a different daemon than the one specified in package.json
-+            if (config.lbrynetDaemonVersion === lbrynetVersion) {
-+                return dispatch({
-+                    type: ACTIONS.DAEMON_VERSION_MATCH,
-+                });
-+            }
-+
-+            dispatch({
-+                type: ACTIONS.DAEMON_VERSION_MISMATCH,
-+            });
-+
-+            return dispatch(doOpenModal(MODALS.INCOMPATIBLE_DAEMON));
-         });
--      }
--
--      dispatch({
--        type: ACTIONS.DAEMON_VERSION_MISMATCH,
--      });
--
--      return dispatch(doOpenModal(MODALS.INCOMPATIBLE_DAEMON));
--    });
--    // @endif
--    // @if TARGET='web'
--    dispatch({
--      type: ACTIONS.DAEMON_VERSION_MATCH,
--    });
--    // @endif
--  };
-+        // @endif
-+        // @if TARGET='web'
-+        dispatch({
-+            type: ACTIONS.DAEMON_VERSION_MATCH,
-+        });
-+        // @endif
-+    };
- }
- 
- export function doNotifyEncryptWallet() {
--  return dispatch => {
--    dispatch(doOpenModal(MODALS.WALLET_ENCRYPT));
--  };
-+    return dispatch => {
-+        dispatch(doOpenModal(MODALS.WALLET_ENCRYPT));
-+    };
- }
- 
- export function doNotifyDecryptWallet() {
--  return dispatch => {
--    dispatch(doOpenModal(MODALS.WALLET_DECRYPT));
--  };
-+    return dispatch => {
-+        dispatch(doOpenModal(MODALS.WALLET_DECRYPT));
-+    };
- }
- 
- export function doNotifyUnlockWallet() {
--  return dispatch => {
--    dispatch(doOpenModal(MODALS.WALLET_UNLOCK));
--  };
-+    return dispatch => {
-+        dispatch(doOpenModal(MODALS.WALLET_UNLOCK));
-+    };
- }
- 
- export function doAlertError(errorList) {
--  return dispatch => {
--    dispatch(doError(errorList));
--  };
-+    return dispatch => {
-+        dispatch(doError(errorList));
-+    };
- }
- 
- export function doDaemonReady() {
--  return (dispatch, getState) => {
--    const state = getState();
--
--    dispatch(doAuthenticate(appVersion));
--    dispatch({ type: ACTIONS.DAEMON_READY });
--
--    // @if TARGET='app'
--    dispatch(doFetchDaemonSettings());
--    dispatch(doBalanceSubscribe());
--    dispatch(doFetchFileInfosAndPublishedClaims());
+   return dispatch => {
+     // @if TARGET='app'
+@@ -316,10 +108,6 @@ export function doDaemonReady() {
+     dispatch(doFetchDaemonSettings());
+     dispatch(doBalanceSubscribe());
+     dispatch(doFetchFileInfosAndPublishedClaims());
 -    if (!selectIsUpgradeSkipped(state)) {
 -      dispatch(doCheckUpgradeAvailable());
 -    }
 -    dispatch(doCheckUpgradeSubscribe());
--    dispatch(doCheckSubscriptionsInit());
--    // @endif
--  };
-+    return (dispatch, getState) => {
-+        const state = getState();
-+
-+        dispatch(doAuthenticate(appVersion));
-+        dispatch({ type: ACTIONS.DAEMON_READY });
-+
-+        // @if TARGET='app'
-+        dispatch(doFetchDaemonSettings());
-+        dispatch(doBalanceSubscribe());
-+        dispatch(doFetchFileInfosAndPublishedClaims());
-+        dispatch(doCheckSubscriptionsInit());
-+        // @endif
-+    };
- }
- 
- export function doClearCache() {
--  return () => {
--    window.cacheStore.purge();
-+    return () => {
-+        window.cacheStore.purge();
- 
--    return Promise.resolve();
--  };
-+        return Promise.resolve();
-+    };
- }
- 
- export function doQuit() {
--  return () => {
--    // @if TARGET='app'
--    remote.app.quit();
--    // @endif
--  };
-+    return () => {
-+        // @if TARGET='app'
-+        remote.app.quit();
-+        // @endif
-+    };
- }
- 
- export function doQuitAnyDaemon() {
--  return dispatch => {
--    // @if TARGET='app'
--    Lbry.stop()
--      .catch(() => {
--        try {
--          if (process.platform === 'win32') {
--            execSync('taskkill /im lbrynet.exe /t /f');
--          } else {
--            execSync('pkill lbrynet');
--          }
--        } catch (error) {
--          dispatch(doAlertError(`Quitting daemon failed due to: ${error.message}`));
--        }
--      })
--      .finally(() => {
--        dispatch(doQuit());
--      });
--    // @endif
--  };
-+    return dispatch => {
-+        // @if TARGET='app'
-+        Lbry.stop()
-+            .catch(() => {
-+                try {
-+                    if (process.platform === 'win32') {
-+                        execSync('taskkill /im lbrynet.exe /t /f');
-+                    } else {
-+                        execSync('pkill lbrynet');
-+                    }
-+                } catch (error) {
-+                    dispatch(doAlertError(`Quitting daemon failed due to: ${error.message}`));
-+                }
-+            })
-+            .finally(() => {
-+                dispatch(doQuit());
-+            });
-+        // @endif
-+    };
- }
- 
- export function doChangeVolume(volume) {
--  return dispatch => {
--    dispatch({
--      type: ACTIONS.VOLUME_CHANGED,
--      data: {
--        volume,
--      },
--    });
--  };
-+    return dispatch => {
-+        dispatch({
-+            type: ACTIONS.VOLUME_CHANGED,
-+            data: {
-+                volume,
-+            },
-+        });
-+    };
- }
- 
- export function doClickCommentButton() {
--  return {
--    type: ACTIONS.ADD_COMMENT,
--  };
-+    return {
-+        type: ACTIONS.ADD_COMMENT,
-+    };
- }
- 
- export function doConditionalAuthNavigate(newSession) {
--  return (dispatch, getState) => {
--    const state = getState();
--    const modal = selectModal(state);
--
--    if (newSession || (modal && modal.id !== MODALS.EMAIL_COLLECTION)) {
--      dispatch(push('/$/auth'));
--    }
--  };
-+    return (dispatch, getState) => {
-+        const state = getState();
-+        const modal = selectModal(state);
-+
-+        if (newSession || (modal && modal.id !== MODALS.EMAIL_COLLECTION)) {
-+            dispatch(push('/$/auth'));
-+        }
-+    };
- }
- 
- export function doToggleEnhancedLayout() {
--  return {
--    type: ACTIONS.ENNNHHHAAANNNCEEE,
--  };
-+    return {
-+        type: ACTIONS.ENNNHHHAAANNNCEEE,
-+    };
- }
- 
- export function doToggleSearchExpanded() {
--  return {
--    type: ACTIONS.TOGGLE_SEARCH_EXPANDED,
--  };
-+    return {
-+        type: ACTIONS.TOGGLE_SEARCH_EXPANDED,
-+    };
- }
+     dispatch(doCheckSubscriptionsInit());
+     // @endif
+   };
 -- 
 2.21.0
 
