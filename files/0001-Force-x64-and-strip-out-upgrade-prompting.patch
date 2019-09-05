@@ -1,6 +1,6 @@
-From 9389f250efc9fa1db01d7f2e78cd0f7def22f5ac Mon Sep 17 00:00:00 2001
+From 7653627aad32a3217c7b16618258bb0eea5cbdb5 Mon Sep 17 00:00:00 2001
 From: Joshua Strobl <joshua@streambits.io>
-Date: Thu, 15 Aug 2019 16:07:45 +0300
+Date: Thu, 5 Sep 2019 06:57:46 +0300
 Subject: [PATCH 1/1] Force x64 and strip out upgrade prompting.
 
 ---
@@ -17,10 +17,10 @@ Subject: [PATCH 1/1] Force x64 and strip out upgrade prompting.
  10 files changed, 7 insertions(+), 248 deletions(-)
 
 diff --git a/package.json b/package.json
-index 2be3ff24..7bc21200 100644
+index 59bf92ce..71ccd225 100644
 --- a/package.json
 +++ b/package.json
-@@ -30,14 +30,15 @@
+@@ -31,15 +31,16 @@
      "run:web": "cross-env NODE_ENV=production yarn compile:web && node ./dist/web/server.js",
      "pack": "electron-builder --dir",
      "dist": "electron-builder",
@@ -33,11 +33,12 @@ index 2be3ff24..7bc21200 100644
      "flow-defs": "flow-typed install",
      "precommit": "lint-staged",
      "preinstall": "yarn cache clean lbry-redux && yarn cache clean lbryinc",
--    "postinstall": "electron-builder install-app-deps && node ./build/downloadDaemon.js"
-+    "postinstall": "electron-builder install-app-deps --arch=x64 && node build/downloadDaemon.js"
+     "postinstall": "if-env NODE_ENV=production && yarn postinstall:warning || if-env APP_ENV=web && echo 'Done installing deps' || yarn postinstall:electron",
+-    "postinstall:electron": "electron-builder install-app-deps && node ./build/downloadDaemon.js",
++    "postinstall:electron": "electron-builder install-app-deps --arch=x64 && node build/downloadDaemon.js",
+     "postinstall:warning": "echo '\n\nWARNING\n\nNot all node modules were installed because NODE_ENV is set to \"production\".\nThis should only be set after installing dependencies with \"yarn\". The app will not work.\n\n'"
    },
    "dependencies": {
-     "@reach/menu-button": "^0.1.18",
 diff --git a/src/ui/component/page/view.jsx b/src/ui/component/page/view.jsx
 index 4a309fdc..ca2cda3f 100644
 --- a/src/ui/component/page/view.jsx
@@ -62,10 +63,10 @@ index 4a309fdc..ca2cda3f 100644
      </main>
    );
 diff --git a/src/ui/component/splash/view.jsx b/src/ui/component/splash/view.jsx
-index b2e1a7b4..496f847a 100644
+index b8bfc4c6..1941cbc2 100644
 --- a/src/ui/component/splash/view.jsx
 +++ b/src/ui/component/splash/view.jsx
-@@ -5,7 +5,6 @@ import { Lbry } from 'lbry-redux';
+@@ -6,7 +6,6 @@ import { Lbry } from 'lbry-redux';
  import Button from 'component/button';
  import ModalWalletUnlock from 'modal/modalWalletUnlock';
  import ModalIncompatibleDaemon from 'modal/modalIncompatibleDaemon';
@@ -73,7 +74,7 @@ index b2e1a7b4..496f847a 100644
  import ModalDownloading from 'modal/modalDownloading';
  import 'css-doodle';
  
-@@ -198,8 +197,6 @@ export default class SplashScreen extends React.PureComponent<Props, State> {
+@@ -207,8 +206,6 @@ export default class SplashScreen extends React.PureComponent<Props, State> {
          return <ModalIncompatibleDaemon onContinueAnyway={this.runWithIncompatibleDaemon} />;
        case MODALS.WALLET_UNLOCK:
          return <ModalWalletUnlock />;
@@ -83,7 +84,7 @@ index b2e1a7b4..496f847a 100644
          return <ModalDownloading />;
        default:
 diff --git a/src/ui/index.jsx b/src/ui/index.jsx
-index e3df2096..38839f3d 100644
+index c7c62822..ef93ab0b 100644
 --- a/src/ui/index.jsx
 +++ b/src/ui/index.jsx
 @@ -11,7 +11,7 @@ import * as MODALS from 'constants/modal_types';
@@ -95,7 +96,7 @@ index e3df2096..38839f3d 100644
  import { Lbry, doToast, isURIValid, setSearchApi } from 'lbry-redux';
  import { doInitLanguage, doUpdateIsNightAsync } from 'redux/actions/settings';
  import {
-@@ -215,10 +215,6 @@ function AppWrapper() {
+@@ -216,10 +216,6 @@ function AppWrapper() {
        autoUpdater.on('update-not-available', () => {
          console.log('Update not available'); // eslint-disable-line no-console
        });
@@ -104,8 +105,8 @@ index e3df2096..38839f3d 100644
 -        app.store.dispatch(doAutoUpdate());
 -      });
      }
+     // @endif
    }, []);
- 
 diff --git a/src/ui/modal/modalAutoUpdateConfirm/index.js b/src/ui/modal/modalAutoUpdateConfirm/index.js
 index 91aa1d01..49c2f5f1 100644
 --- a/src/ui/modal/modalAutoUpdateConfirm/index.js
@@ -188,10 +189,10 @@ index af910c61..88777c3f 100644
        return <ModalAutoUpdateConfirm {...modalProps} />;
      case MODALS.ERROR:
 diff --git a/src/ui/redux/actions/app.js b/src/ui/redux/actions/app.js
-index f3ea9363..ad2515af 100644
+index ee511492..a936d382 100644
 --- a/src/ui/redux/actions/app.js
 +++ b/src/ui/redux/actions/app.js
-@@ -11,7 +11,6 @@ import Native from 'native';
+@@ -18,7 +18,6 @@ import Native from 'native';
  import { doFetchDaemonSettings } from 'redux/actions/settings';
  import { doCheckSubscriptionsInit } from 'redux/actions/subscriptions';
  import {
@@ -199,7 +200,7 @@ index f3ea9363..ad2515af 100644
    selectUpdateUrl,
    selectUpgradeDownloadItem,
    selectUpgradeDownloadPath,
-@@ -31,8 +30,6 @@ const { download } = remote.require('electron-dl');
+@@ -39,8 +38,6 @@ const { download } = remote.require('electron-dl');
  const Fs = remote.require('fs');
  // @endif
  
@@ -208,7 +209,7 @@ index f3ea9363..ad2515af 100644
  export function doOpenModal(id, modalProps = {}) {
    return {
      type: ACTIONS.SHOW_MODAL,
-@@ -49,211 +46,6 @@ export function doHideModal() {
+@@ -57,211 +54,6 @@ export function doHideModal() {
    };
  }
  
@@ -420,7 +421,7 @@ index f3ea9363..ad2515af 100644
  export function doCheckDaemonVersion() {
    return dispatch => {
      // @if TARGET='app'
-@@ -316,10 +108,6 @@ export function doDaemonReady() {
+@@ -324,10 +116,6 @@ export function doDaemonReady() {
      dispatch(doFetchDaemonSettings());
      dispatch(doBalanceSubscribe());
      dispatch(doFetchFileInfosAndPublishedClaims());
@@ -432,7 +433,7 @@ index f3ea9363..ad2515af 100644
      // @endif
    };
 diff --git a/src/ui/redux/selectors/app.js b/src/ui/redux/selectors/app.js
-index 7ddd1ae0..70cd4151 100644
+index 6127e263..37b05baf 100644
 --- a/src/ui/redux/selectors/app.js
 +++ b/src/ui/redux/selectors/app.js
 @@ -65,11 +65,6 @@ export const selectDownloadComplete = createSelector(
@@ -448,5 +449,5 @@ index 7ddd1ae0..70cd4151 100644
    selectState,
    state => state.downloadPath
 -- 
-2.22.0
+2.23.0
 
