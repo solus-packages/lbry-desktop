@@ -1,23 +1,27 @@
-From 7653627aad32a3217c7b16618258bb0eea5cbdb5 Mon Sep 17 00:00:00 2001
+From 2aa0f03989329432415f5ca42fba245d089c2ad2 Mon Sep 17 00:00:00 2001
 From: Joshua Strobl <joshua@streambits.io>
-Date: Thu, 5 Sep 2019 06:57:46 +0300
+Date: Fri, 18 Oct 2019 13:32:40 +0300
 Subject: [PATCH 1/1] Force x64 and strip out upgrade prompting.
 
 ---
  package.json                                  |   5 +-
- src/ui/component/page/view.jsx                |   9 -
+ src/ui/component/app/index.js                 |   3 +-
+ src/ui/component/app/view.jsx                 |  15 --
  src/ui/component/splash/view.jsx              |   3 -
- src/ui/index.jsx                              |   6 +-
- src/ui/modal/modalAutoUpdateConfirm/index.js  |   3 +-
+ src/ui/constants/action_types.js              |   1 -
+ src/ui/constants/modal_types.js               |   1 -
+ src/ui/index.jsx                              |   3 +-
  .../modal/modalAutoUpdateDownloaded/index.js  |   3 +-
  src/ui/modal/modalDownloading/index.js        |   4 +-
  src/ui/modal/modalRouter/view.jsx             |   5 -
- src/ui/redux/actions/app.js                   | 212 ------------------
+ src/ui/modal/modalUpgrade/index.js            |   8 +-
+ src/ui/redux/actions/app.js                   | 192 ------------------
+ src/ui/redux/reducers/app.js                  |   5 -
  src/ui/redux/selectors/app.js                 |   5 -
- 10 files changed, 7 insertions(+), 248 deletions(-)
+ 14 files changed, 9 insertions(+), 244 deletions(-)
 
 diff --git a/package.json b/package.json
-index 59bf92ce..71ccd225 100644
+index 7edb2d74..911a17b9 100644
 --- a/package.json
 +++ b/package.json
 @@ -31,15 +31,16 @@
@@ -39,31 +43,62 @@ index 59bf92ce..71ccd225 100644
      "postinstall:warning": "echo '\n\nWARNING\n\nNot all node modules were installed because NODE_ENV is set to \"production\".\nThis should only be set after installing dependencies with \"yarn\". The app will not work.\n\n'"
    },
    "dependencies": {
-diff --git a/src/ui/component/page/view.jsx b/src/ui/component/page/view.jsx
-index 4a309fdc..ca2cda3f 100644
---- a/src/ui/component/page/view.jsx
-+++ b/src/ui/component/page/view.jsx
-@@ -14,18 +14,9 @@ type Props = {
+diff --git a/src/ui/component/app/index.js b/src/ui/component/app/index.js
+index 9971c30b..d7cc32f0 100644
+--- a/src/ui/component/app/index.js
++++ b/src/ui/component/app/index.js
+@@ -5,7 +5,7 @@ import { selectUser, doRewardList, doFetchRewardedContent, doFetchAccessToken, s
+ import { doFetchTransactions, doFetchChannelListMine, selectBalance } from 'lbry-redux';
+ import { makeSelectClientSetting, selectThemePath } from 'redux/selectors/settings';
+ import { selectIsUpgradeAvailable, selectAutoUpdateDownloaded } from 'redux/selectors/app';
+-import { doDownloadUpgradeRequested, doSignIn, doSyncWithPreferences } from 'redux/actions/app';
++import { doSignIn, doSyncWithPreferences } from 'redux/actions/app';
+ import { doSetClientSetting } from 'redux/actions/settings';
+ import App from './view';
  
- function Page(props: Props) {
-   const { children, className, autoUpdateDownloaded, isUpgradeAvailable, doDownloadUpgradeRequested } = props;
+@@ -27,7 +27,6 @@ const perform = dispatch => ({
+   fetchAccessToken: () => dispatch(doFetchAccessToken()),
+   fetchChannelListMine: () => dispatch(doFetchChannelListMine()),
+   signIn: () => dispatch(doSignIn()),
+-  requestDownloadUpgrade: () => dispatch(doDownloadUpgradeRequested()),
+   checkSync: () => dispatch(doSyncWithPreferences()),
+   setSyncEnabled: value => dispatch(doSetClientSetting(SETTINGS.ENABLE_SYNC, value)),
+ });
+diff --git a/src/ui/component/app/view.jsx b/src/ui/component/app/view.jsx
+index bf5bd13b..6dffd8cd 100644
+--- a/src/ui/component/app/view.jsx
++++ b/src/ui/component/app/view.jsx
+@@ -80,7 +80,6 @@ function App(props: Props) {
+   const previousHasVerifiedEmail = usePrevious(hasVerifiedEmail);
+   const previousRewardApproved = usePrevious(isRewardApproved);
+   const { pathname, hash } = props.location;
 -  const showUpgradeButton = autoUpdateDownloaded || (process.platform === 'linux' && isUpgradeAvailable);
  
-   return (
-     <main className={classnames('main', className)}>
+   let uri;
+   try {
+@@ -201,20 +200,6 @@ function App(props: Props) {
+       <ModalRouter />
+       <FileViewer pageUri={uri} />
+ 
 -      {/* @if TARGET='app' */}
 -      {showUpgradeButton && (
--        <div className="main__status">
+-        <div className="snack-bar--upgrade">
 -          {__('Upgrade is ready')}
--          <Button button="alt" icon={ICONS.DOWNLOAD} label={__('Install now')} onClick={doDownloadUpgradeRequested} />
+-          <Button
+-            className="snack-bar__action"
+-            button="alt"
+-            icon={ICONS.DOWNLOAD}
+-            label={__('Install now')}
+-            onClick={requestDownloadUpgrade}
+-          />
 -        </div>
 -      )}
 -      {/* @endif */}
-       {children}
-     </main>
+       {isEnhancedLayout && <Yrbl className="yrbl--enhanced" />}
+     </div>
    );
 diff --git a/src/ui/component/splash/view.jsx b/src/ui/component/splash/view.jsx
-index b8bfc4c6..1941cbc2 100644
+index 8f901b7c..59ec629e 100644
 --- a/src/ui/component/splash/view.jsx
 +++ b/src/ui/component/splash/view.jsx
 @@ -6,7 +6,6 @@ import { Lbry } from 'lbry-redux';
@@ -74,7 +109,7 @@ index b8bfc4c6..1941cbc2 100644
  import ModalDownloading from 'modal/modalDownloading';
  import 'css-doodle';
  
-@@ -207,8 +206,6 @@ export default class SplashScreen extends React.PureComponent<Props, State> {
+@@ -206,8 +205,6 @@ export default class SplashScreen extends React.PureComponent<Props, State> {
          return <ModalIncompatibleDaemon onContinueAnyway={this.runWithIncompatibleDaemon} />;
        case MODALS.WALLET_UNLOCK:
          return <ModalWalletUnlock />;
@@ -83,46 +118,51 @@ index b8bfc4c6..1941cbc2 100644
        case MODALS.DOWNLOADING:
          return <ModalDownloading />;
        default:
+diff --git a/src/ui/constants/action_types.js b/src/ui/constants/action_types.js
+index c1e60b47..911036e5 100644
+--- a/src/ui/constants/action_types.js
++++ b/src/ui/constants/action_types.js
+@@ -42,7 +42,6 @@ export const UPDATE_REMOTE_VERSION = 'UPDATE_REMOTE_VERSION';
+ export const SKIP_UPGRADE = 'SKIP_UPGRADE';
+ export const START_UPGRADE = 'START_UPGRADE';
+ export const AUTO_UPDATE_DECLINED = 'AUTO_UPDATE_DECLINED';
+-export const AUTO_UPDATE_DOWNLOADED = 'AUTO_UPDATE_DOWNLOADED';
+ export const CLEAR_UPGRADE_TIMER = 'CLEAR_UPGRADE_TIMER';
+ 
+ // Wallet
+diff --git a/src/ui/constants/modal_types.js b/src/ui/constants/modal_types.js
+index c5e1ef8e..f7f29f4d 100644
+--- a/src/ui/constants/modal_types.js
++++ b/src/ui/constants/modal_types.js
+@@ -4,7 +4,6 @@ export const INCOMPATIBLE_DAEMON = 'incompatible_daemon';
+ export const FILE_TIMEOUT = 'file_timeout';
+ export const DOWNLOADING = 'downloading';
+ export const AUTO_GENERATE_THUMBNAIL = 'auto_generate_thumbnail';
+-export const AUTO_UPDATE_DOWNLOADED = 'auto_update_downloaded';
+ export const ERROR = 'error';
+ export const UPGRADE = 'upgrade';
+ export const WELCOME = 'welcome';
 diff --git a/src/ui/index.jsx b/src/ui/index.jsx
-index c7c62822..ef93ab0b 100644
+index 02d54d0a..f4fe3b45 100644
 --- a/src/ui/index.jsx
 +++ b/src/ui/index.jsx
 @@ -11,7 +11,7 @@ import * as MODALS from 'constants/modal_types';
- import React, { useState, useEffect } from 'react';
+ import React, { Fragment, useState, useEffect } from 'react';
  import ReactDOM from 'react-dom';
  import { Provider } from 'react-redux';
 -import { doConditionalAuthNavigate, doDaemonReady, doAutoUpdate, doOpenModal, doHideModal } from 'redux/actions/app';
 +import { doConditionalAuthNavigate, doDaemonReady, doOpenModal, doHideModal } from 'redux/actions/app';
  import { Lbry, doToast, isURIValid, setSearchApi } from 'lbry-redux';
- import { doInitLanguage, doUpdateIsNightAsync } from 'redux/actions/settings';
+ import { doUpdateIsNightAsync } from 'redux/actions/settings';
  import {
-@@ -216,10 +216,6 @@ function AppWrapper() {
-       autoUpdater.on('update-not-available', () => {
-         console.log('Update not available'); // eslint-disable-line no-console
+@@ -213,7 +213,6 @@ function AppWrapper() {
        });
--      autoUpdater.on('update-downloaded', () => {
--        console.log('Update downloaded'); // eslint-disable-line no-console
+       autoUpdater.on('update-downloaded', () => {
+         console.log('Update downloaded'); // eslint-disable-line no-console
 -        app.store.dispatch(doAutoUpdate());
--      });
+       });
      }
      // @endif
-   }, []);
-diff --git a/src/ui/modal/modalAutoUpdateConfirm/index.js b/src/ui/modal/modalAutoUpdateConfirm/index.js
-index 91aa1d01..49c2f5f1 100644
---- a/src/ui/modal/modalAutoUpdateConfirm/index.js
-+++ b/src/ui/modal/modalAutoUpdateConfirm/index.js
-@@ -1,10 +1,9 @@
- import { connect } from 'react-redux';
--import { doAutoUpdateDeclined, doHideModal } from 'redux/actions/app';
-+import { doHideModal } from 'redux/actions/app';
- import ModalAutoUpdateConfirm from './view';
- 
- const perform = dispatch => ({
-   closeModal: () => dispatch(doHideModal()),
--  declineAutoUpdate: () => dispatch(doAutoUpdateDeclined()),
- });
- 
- export default connect(
 diff --git a/src/ui/modal/modalAutoUpdateDownloaded/index.js b/src/ui/modal/modalAutoUpdateDownloaded/index.js
 index afe8e8fa..504e06db 100644
 --- a/src/ui/modal/modalAutoUpdateDownloaded/index.js
@@ -162,18 +202,18 @@ index 1a06ee04..eaf3396e 100644
  });
  
 diff --git a/src/ui/modal/modalRouter/view.jsx b/src/ui/modal/modalRouter/view.jsx
-index af910c61..88777c3f 100644
+index 10c87acc..1fa0a424 100644
 --- a/src/ui/modal/modalRouter/view.jsx
 +++ b/src/ui/modal/modalRouter/view.jsx
-@@ -7,7 +7,6 @@ import ModalDownloading from 'modal/modalDownloading';
+@@ -5,7 +5,6 @@ import ModalError from 'modal/modalError';
+ import ModalDownloading from 'modal/modalDownloading';
  import ModalAutoGenerateThumbnail from 'modal/modalAutoGenerateThumbnail';
  import ModalAutoUpdateDownloaded from 'modal/modalAutoUpdateDownloaded';
- import ModalAutoUpdateConfirm from 'modal/modalAutoUpdateConfirm';
 -import ModalUpgrade from 'modal/modalUpgrade';
  import ModalWelcome from 'modal/modalWelcome';
  import ModalFirstReward from 'modal/modalFirstReward';
- import ModalRewardApprovalRequired from 'modal/modalRewardApprovalRequired';
-@@ -48,14 +47,10 @@ function ModalRouter(props: Props) {
+ import ModalRemoveFile from 'modal/modalRemoveFile';
+@@ -46,14 +45,10 @@ function ModalRouter(props: Props) {
    const { id, modalProps } = modal;
  
    switch (id) {
@@ -185,22 +225,55 @@ index af910c61..88777c3f 100644
        return <ModalAutoGenerateThumbnail {...modalProps} />;
 -    case MODALS.AUTO_UPDATE_DOWNLOADED:
 -      return <ModalAutoUpdateDownloaded {...modalProps} />;
-     case MODALS.AUTO_UPDATE_CONFIRM:
-       return <ModalAutoUpdateConfirm {...modalProps} />;
      case MODALS.ERROR:
+       return <ModalError {...modalProps} />;
+     case MODALS.FILE_TIMEOUT:
+diff --git a/src/ui/modal/modalUpgrade/index.js b/src/ui/modal/modalUpgrade/index.js
+index f1b58121..18effcba 100644
+--- a/src/ui/modal/modalUpgrade/index.js
++++ b/src/ui/modal/modalUpgrade/index.js
+@@ -1,15 +1,11 @@
+ import { connect } from 'react-redux';
+-import { doDownloadUpgrade, doSkipUpgrade, doHideModal } from 'redux/actions/app';
++import { doHideModal } from 'redux/actions/app';
+ import ModalUpgrade from './view';
+ 
+ const select = () => ({});
+ 
+ const perform = dispatch => ({
+-  downloadUpgrade: () => dispatch(doDownloadUpgrade()),
+-  skipUpgrade: () => {
+-    dispatch(doHideModal());
+-    dispatch(doSkipUpgrade());
+-  },
++  doHideModal())
+ });
+ 
+ export default connect(
 diff --git a/src/ui/redux/actions/app.js b/src/ui/redux/actions/app.js
-index ee511492..a936d382 100644
+index 96ee3946..9d979118 100644
 --- a/src/ui/redux/actions/app.js
 +++ b/src/ui/redux/actions/app.js
-@@ -18,7 +18,6 @@ import Native from 'native';
+@@ -23,13 +23,9 @@ import {
+ import Native from 'native';
  import { doFetchDaemonSettings } from 'redux/actions/settings';
- import { doCheckSubscriptionsInit } from 'redux/actions/subscriptions';
  import {
 -  selectIsUpgradeSkipped,
    selectUpdateUrl,
-   selectUpgradeDownloadItem,
+-  selectUpgradeDownloadItem,
    selectUpgradeDownloadPath,
-@@ -39,8 +38,6 @@ const { download } = remote.require('electron-dl');
+   selectUpgradeFilename,
+-  selectAutoUpdateDeclined,
+-  selectRemoteVersion,
+   selectUpgradeTimer,
+   selectModal,
+ } from 'redux/selectors/app';
+@@ -40,13 +36,10 @@ import analytics from 'analytics';
+ import { deleteAuthToken, getSavedPassword, getAuthToken } from 'util/saved-passwords';
+ 
+ // @if TARGET='app'
+-const { autoUpdater } = remote.require('electron-updater');
+ const { download } = remote.require('electron-dl');
  const Fs = remote.require('fs');
  // @endif
  
@@ -209,7 +282,7 @@ index ee511492..a936d382 100644
  export function doOpenModal(id, modalProps = {}) {
    return {
      type: ACTIONS.SHOW_MODAL,
-@@ -57,211 +54,6 @@ export function doHideModal() {
+@@ -63,84 +56,6 @@ export function doHideModal() {
    };
  }
  
@@ -280,21 +353,10 @@ index ee511492..a936d382 100644
 -  // This will probably be reorganized once we get auto-update going on Linux and remove
 -  // the old logic.
 -
--  return (dispatch, getState) => {
--    const state = getState();
--
--    const autoUpdateDeclined = selectAutoUpdateDeclined(state);
--
+-  return dispatch => {
 -    if (['win32', 'darwin'].includes(process.platform)) {
 -      // electron-updater behavior
--      if (autoUpdateDeclined) {
--        // The user declined an update before, so show the "confirm" dialog
--        dispatch(doOpenModal(MODALS.AUTO_UPDATE_CONFIRM));
--      } else {
--        // The user was never shown the original update dialog (e.g. because they were
--        // watching a video). So show the inital "update downloaded" dialog.
--        dispatch(doOpenModal(MODALS.AUTO_UPDATE_DOWNLOADED));
--      }
+-      dispatch(doOpenModal(MODALS.AUTO_UPDATE_DOWNLOADED));
 -    } else {
 -      // Old behavior for Linux
 -      dispatch(doDownloadUpgrade());
@@ -302,19 +364,13 @@ index ee511492..a936d382 100644
 -  };
 -}
 -
--export function doClearUpgradeTimer() {
--  return (dispatch, getState) => {
--    const state = getState();
--
--    if (selectUpgradeTimer(state)) {
--      clearInterval(selectUpgradeTimer(state));
--      dispatch({
--        type: ACTIONS.CLEAR_UPGRADE_TIMER,
--      });
--    }
--  };
--}
--
+ export function doClearUpgradeTimer() {
+   return (dispatch, getState) => {
+     const state = getState();
+@@ -154,109 +69,6 @@ export function doClearUpgradeTimer() {
+   };
+ }
+ 
 -export function doAutoUpdate() {
 -  return dispatch => {
 -    dispatch({
@@ -421,19 +477,35 @@ index ee511492..a936d382 100644
  export function doCheckDaemonVersion() {
    return dispatch => {
      // @if TARGET='app'
-@@ -324,10 +116,6 @@ export function doDaemonReady() {
-     dispatch(doFetchDaemonSettings());
+@@ -324,10 +136,6 @@ export function doDaemonReady() {
      dispatch(doBalanceSubscribe());
+     dispatch(doFetchDaemonSettings());
      dispatch(doFetchFileInfosAndPublishedClaims());
 -    if (!selectIsUpgradeSkipped(state)) {
 -      dispatch(doCheckUpgradeAvailable());
 -    }
 -    dispatch(doCheckUpgradeSubscribe());
-     dispatch(doCheckSubscriptionsInit());
      // @endif
    };
+ }
+diff --git a/src/ui/redux/reducers/app.js b/src/ui/redux/reducers/app.js
+index 5746fddd..524b1d91 100644
+--- a/src/ui/redux/reducers/app.js
++++ b/src/ui/redux/reducers/app.js
+@@ -119,11 +119,6 @@ reducers[ACTIONS.UPGRADE_CANCELLED] = state =>
+     modal: null,
+   });
+ 
+-reducers[ACTIONS.AUTO_UPDATE_DOWNLOADED] = state =>
+-  Object.assign({}, state, {
+-    autoUpdateDownloaded: true,
+-  });
+-
+ reducers[ACTIONS.AUTO_UPDATE_DECLINED] = state =>
+   Object.assign({}, state, {
+     autoUpdateDeclined: true,
 diff --git a/src/ui/redux/selectors/app.js b/src/ui/redux/selectors/app.js
-index 6127e263..37b05baf 100644
+index 21048648..331a046c 100644
 --- a/src/ui/redux/selectors/app.js
 +++ b/src/ui/redux/selectors/app.js
 @@ -65,11 +65,6 @@ export const selectDownloadComplete = createSelector(
