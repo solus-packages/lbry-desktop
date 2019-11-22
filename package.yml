@@ -1,8 +1,8 @@
 name       : lbry-desktop
-version    : 0.37.0
-release    : 47
+version    : 0.37.2
+release    : 48
 source     :
-    - https://github.com/lbryio/lbry-desktop/archive/v0.37.0.tar.gz : 6fd9bf9e15df9ca923f921efafd4ea6c842345f64dfab48fe02e284eba909edc
+    - https://github.com/lbryio/lbry-desktop/archive/v0.37.2.tar.gz : 288649379ba24c31ac9444bed529a384406ca74aa44f8a4304c9d2f61d140fc0
 license    : MIT
 component  : multimedia.video
 networking : yes
@@ -24,7 +24,6 @@ builddeps  :
     - wget
     - yarn
 setup      : |
-    %patch -p1 < $pkgfiles/0001-Force-x64-and-strip-out-upgrade-prompting.patch
     yarn
 build      : |
     yarn build:dir
@@ -38,3 +37,6 @@ install    : |
     ln -s /usr/share/lbry-desktop/LBRY $installdir/usr/bin/lbry
     install -Dm00644 $pkgfiles/lbry-desktop.desktop $installdir/usr/share/applications/lbry-desktop.desktop
     install -Dm00644 build/icons/256x256.png $installdir/usr/share/pixmaps/lbry.png
+    # App update disable mechanism
+    touch $installdir/usr/share/lbry-desktop/resources/static/upgradeDisabled
+    chmod 00644 $installdir/usr/share/lbry-desktop/resources/static/upgradeDisabled
