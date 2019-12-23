@@ -1,8 +1,8 @@
 name       : lbry-desktop
-version    : 0.37.2
-release    : 48
+version    : 0.38.2
+release    : 49
 source     :
-    - https://github.com/lbryio/lbry-desktop/archive/v0.37.2.tar.gz : 288649379ba24c31ac9444bed529a384406ca74aa44f8a4304c9d2f61d140fc0
+    - https://github.com/lbryio/lbry-desktop/archive/v0.38.2.tar.gz : d4d2386383e3a997b9110d3a3aeb3fa32bd87de36fe763411a472b6c66825f70
 license    : MIT
 component  : multimedia.video
 networking : yes
@@ -34,7 +34,7 @@ install    : |
     install -dm00755 $installdir/usr/bin
     install -dm00644 $installdir/usr/share/lbry-desktop
     cp -R dist/electron/linux-unpacked/* $installdir/usr/share/lbry-desktop/
-    ln -s /usr/share/lbry-desktop/LBRY $installdir/usr/bin/lbry
+    ln -s /usr/share/lbry-desktop/lbry $installdir/usr/bin/lbry
     install -Dm00644 $pkgfiles/lbry-desktop.desktop $installdir/usr/share/applications/lbry-desktop.desktop
     install -Dm00644 build/icons/256x256.png $installdir/usr/share/pixmaps/lbry.png
     # App update disable mechanism

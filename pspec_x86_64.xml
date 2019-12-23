@@ -21,12 +21,12 @@
         <Files>
             <Path fileType="executable">/usr/bin/lbry</Path>
             <Path fileType="data">/usr/share/applications/lbry-desktop.desktop</Path>
-            <Path fileType="data">/usr/share/lbry-desktop/LBRY</Path>
             <Path fileType="data">/usr/share/lbry-desktop/LICENSE.electron.txt</Path>
             <Path fileType="data">/usr/share/lbry-desktop/LICENSES.chromium.html</Path>
             <Path fileType="data">/usr/share/lbry-desktop/chrome_100_percent.pak</Path>
             <Path fileType="data">/usr/share/lbry-desktop/chrome_200_percent.pak</Path>
             <Path fileType="data">/usr/share/lbry-desktop/icudtl.dat</Path>
+            <Path fileType="data">/usr/share/lbry-desktop/lbry</Path>
             <Path fileType="data">/usr/share/lbry-desktop/libEGL.so</Path>
             <Path fileType="data">/usr/share/lbry-desktop/libGLESv2.so</Path>
             <Path fileType="data">/usr/share/lbry-desktop/libVkICD_mock_icd.so</Path>
@@ -88,34 +88,22 @@
             <Path fileType="data">/usr/share/lbry-desktop/resources.pak</Path>
             <Path fileType="data">/usr/share/lbry-desktop/resources/app.asar</Path>
             <Path fileType="data">/usr/share/lbry-desktop/resources/electron.asar</Path>
-            <Path fileType="data">/usr/share/lbry-desktop/resources/static/app-strings.json</Path>
             <Path fileType="data">/usr/share/lbry-desktop/resources/static/daemon/lbrynet</Path>
-            <Path fileType="data">/usr/share/lbry-desktop/resources/static/font/inter/300.woff</Path>
-            <Path fileType="data">/usr/share/lbry-desktop/resources/static/font/inter/300.woff2</Path>
-            <Path fileType="data">/usr/share/lbry-desktop/resources/static/font/inter/300i.woff</Path>
-            <Path fileType="data">/usr/share/lbry-desktop/resources/static/font/inter/300i.woff2</Path>
-            <Path fileType="data">/usr/share/lbry-desktop/resources/static/font/inter/400.woff</Path>
-            <Path fileType="data">/usr/share/lbry-desktop/resources/static/font/inter/400.woff2</Path>
-            <Path fileType="data">/usr/share/lbry-desktop/resources/static/font/inter/400i.woff</Path>
-            <Path fileType="data">/usr/share/lbry-desktop/resources/static/font/inter/400i.woff2</Path>
-            <Path fileType="data">/usr/share/lbry-desktop/resources/static/font/inter/700.woff</Path>
-            <Path fileType="data">/usr/share/lbry-desktop/resources/static/font/inter/700.woff2</Path>
-            <Path fileType="data">/usr/share/lbry-desktop/resources/static/font/inter/700i.woff</Path>
-            <Path fileType="data">/usr/share/lbry-desktop/resources/static/font/inter/700i.woff2</Path>
+            <Path fileType="data">/usr/share/lbry-desktop/resources/static/font/v1/300.woff</Path>
+            <Path fileType="data">/usr/share/lbry-desktop/resources/static/font/v1/300i.woff</Path>
+            <Path fileType="data">/usr/share/lbry-desktop/resources/static/font/v1/400.woff</Path>
+            <Path fileType="data">/usr/share/lbry-desktop/resources/static/font/v1/400i.woff</Path>
+            <Path fileType="data">/usr/share/lbry-desktop/resources/static/font/v1/700.woff</Path>
+            <Path fileType="data">/usr/share/lbry-desktop/resources/static/font/v1/700i.woff</Path>
             <Path fileType="data">/usr/share/lbry-desktop/resources/static/img/busy.gif</Path>
-            <Path fileType="data">/usr/share/lbry-desktop/resources/static/img/favicon.ico</Path>
+            <Path fileType="data">/usr/share/lbry-desktop/resources/static/img/favicon.png</Path>
             <Path fileType="data">/usr/share/lbry-desktop/resources/static/img/og.png</Path>
             <Path fileType="data">/usr/share/lbry-desktop/resources/static/img/tray/default/tray.png</Path>
             <Path fileType="data">/usr/share/lbry-desktop/resources/static/img/tray/mac/trayTemplate.png</Path>
             <Path fileType="data">/usr/share/lbry-desktop/resources/static/img/tray/mac/trayTemplate@2x copy.png</Path>
             <Path fileType="data">/usr/share/lbry-desktop/resources/static/img/tray/mac/trayTemplate@2x.png</Path>
             <Path fileType="data">/usr/share/lbry-desktop/resources/static/img/tray/windows/tray.ico</Path>
-            <Path fileType="data">/usr/share/lbry-desktop/resources/static/index-electron.html</Path>
-            <Path fileType="data">/usr/share/lbry-desktop/resources/static/index-web.html</Path>
             <Path fileType="data">/usr/share/lbry-desktop/resources/static/upgradeDisabled</Path>
-            <Path fileType="data">/usr/share/lbry-desktop/resources/static/webworkers/wasm-gen/libarchive.js</Path>
-            <Path fileType="data">/usr/share/lbry-desktop/resources/static/webworkers/wasm-gen/libarchive.wasm</Path>
-            <Path fileType="data">/usr/share/lbry-desktop/resources/static/webworkers/worker-bundle.js</Path>
             <Path fileType="data">/usr/share/lbry-desktop/snapshot_blob.bin</Path>
             <Path fileType="data">/usr/share/lbry-desktop/swiftshader/libEGL.so</Path>
             <Path fileType="data">/usr/share/lbry-desktop/swiftshader/libGLESv2.so</Path>
@@ -127,9 +115,9 @@
         </Replaces>
     </Package>
     <History>
-        <Update release="48">
-            <Date>2019-11-22</Date>
-            <Version>0.37.2</Version>
+        <Update release="49">
+            <Date>2019-12-23</Date>
+            <Version>0.38.2</Version>
             <Comment>Packaging update</Comment>
             <Name>Joshua Strobl</Name>
             <Email>joshua@stroblindustries.com</Email>
