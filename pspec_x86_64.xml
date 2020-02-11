@@ -115,8 +115,8 @@
         </Replaces>
     </Package>
     <History>
-        <Update release="51">
-            <Date>2020-01-29</Date>
+        <Update release="52">
+            <Date>2020-02-11</Date>
             <Version>0.39.1</Version>
             <Comment>Packaging update</Comment>
             <Name>Joshua Strobl</Name>

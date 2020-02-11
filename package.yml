@@ -1,6 +1,6 @@
 name       : lbry-desktop
 version    : 0.39.1
-release    : 51
+release    : 52
 source     :
     - https://github.com/lbryio/lbry-desktop/archive/v0.39.1.tar.gz : 8240d851ea4af98a1fe756ef6b3708b9bf3b8250be72023da709ba1b5f588fab
 license    : MIT
