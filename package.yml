@@ -1,8 +1,8 @@
 name       : lbry-desktop
-version    : 0.43.3
-release    : 55
+version    : 0.43.4
+release    : 56
 source     :
-    - https://github.com/lbryio/lbry-desktop/archive/v0.43.3.tar.gz : d02e90dd97b2be09245bee55037837144ad236546c4635c34f7cd639da361208
+    - https://github.com/lbryio/lbry-desktop/archive/v0.43.4.tar.gz : 0786ab3d1d49b808bf061cbc763b8bb914e86eb6ca8fddc4af50f2efc0c22459
 license    : MIT
 component  : multimedia.video
 networking : yes
@@ -23,6 +23,8 @@ builddeps  :
     - git
     - wget
     - yarn
+rundeps    :
+    - gnome-keyring
 setup      : |
     yarn
 build      : |
