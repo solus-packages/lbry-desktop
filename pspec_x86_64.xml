@@ -103,7 +103,7 @@
             <Path fileType="data">/usr/share/lbry-desktop/resources/static/img/tray/mac/trayTemplate@2x.png</Path>
             <Path fileType="data">/usr/share/lbry-desktop/resources/static/img/tray/windows/tray.ico</Path>
             <Path fileType="data">/usr/share/lbry-desktop/resources/static/img/unlocklbry.svg</Path>
-            <Path fileType="data">/usr/share/lbry-desktop/resources/static/img/v1-og.png</Path>
+            <Path fileType="data">/usr/share/lbry-desktop/resources/static/img/v2-og.png</Path>
             <Path fileType="data">/usr/share/lbry-desktop/resources/static/upgradeDisabled</Path>
             <Path fileType="data">/usr/share/lbry-desktop/snapshot_blob.bin</Path>
             <Path fileType="data">/usr/share/lbry-desktop/swiftshader/libEGL.so</Path>
@@ -116,9 +116,9 @@
         </Replaces>
     </Package>
     <History>
-        <Update release="58">
-            <Date>2020-04-29</Date>
-            <Version>0.45.0</Version>
+        <Update release="59">
+            <Date>2020-05-08</Date>
+            <Version>0.45.1</Version>
             <Comment>Packaging update</Comment>
             <Name>Joshua Strobl</Name>
             <Email>joshua@streambits.io</Email>
