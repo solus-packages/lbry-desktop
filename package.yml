@@ -1,8 +1,8 @@
 name       : lbry-desktop
-version    : 0.45.2
-release    : 60
+version    : 0.46.2
+release    : 61
 source     :
-    - https://github.com/lbryio/lbry-desktop/archive/v0.45.2.tar.gz : 1d5807d9db578b144e573dd381a3fd8dd9380ec78012a986dae58d731693ac96
+    - https://github.com/lbryio/lbry-desktop/archive/v0.46.2.tar.gz : a731f2c1907bc5fbab9c794a139dac79a14b2dfae36c42b05b5d40719744f0ce
 license    : MIT
 component  : multimedia.video
 networking : yes
@@ -26,6 +26,7 @@ builddeps  :
 rundeps    :
     - gnome-keyring
 setup      : |
+    %patch -p1 < $pkgfiles/0001-Update-some-babel-deps-to-resolve-failure-to-get-com.patch
     yarn
 build      : |
     yarn build:dir
