@@ -1,8 +1,8 @@
 name       : lbry-desktop
-version    : 0.47.1
-release    : 63
+version    : 0.48.0
+release    : 64
 source     :
-    - https://github.com/lbryio/lbry-desktop/archive/v0.47.1.tar.gz : 161efa2fb70b5f9d4fd4b53209da29905b3321d605bd6eaa8b9830c693e4040a
+    - https://github.com/lbryio/lbry-desktop/archive/v0.48.0.tar.gz : 3067e406462e31eb469400ed874a34e008f0c211ae33c4a80a35fbcb5f74e9ef
 license    : MIT
 component  : multimedia.video
 networking : yes
