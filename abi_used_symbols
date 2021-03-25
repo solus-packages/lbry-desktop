@@ -1031,7 +1031,6 @@ libglib-2.0.so.0:g_ptr_array_unref
 libglib-2.0.so.0:g_quark_from_string
 libglib-2.0.so.0:g_random_int_range
 libglib-2.0.so.0:g_return_if_fail_warning
-libglib-2.0.so.0:g_setenv
 libglib-2.0.so.0:g_slist_foreach
 libglib-2.0.so.0:g_slist_free
 libglib-2.0.so.0:g_slist_index
